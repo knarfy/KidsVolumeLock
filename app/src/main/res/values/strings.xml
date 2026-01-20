@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Kids Volume Lock</string>
+    <string name="label_max_volume_music">Max Volumen Multimedia</string>
+    <string name="label_service_status">Estado del Servicio</string>
+    <string name="btn_start_service">Activar Bloqueo</string>
+    <string name="btn_stop_service">Desactivar Bloqueo</string>
+    <string name="status_running">Activo</string>
+    <string name="status_stopped">Inactivo</string>
+    <string name="notification_channel_name">Servicio de Bloqueo de Volumen</string>
+    <string name="notification_title">Control de Volumen Activo</string>
+    <string name="notification_content">Monitorizando y limitando volumen...</string>
+    <string name="set_pin_title">Establecer PIN</string>
+    <string name="enter_pin_title">Ingresar PIN</string>
+    <string name="pin_hint">PIN (4 dígitos)</string>
+    <string name="btn_confirm">Confirmar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="error_pin_incorrect">PIN Incorrecto</string>
+    <string name="msg_pin_set">PIN establecido correctamente</string>
+    <string name="text_current_limit">Límite actual: %1$d%%</string>
+    
+    <!-- Log Viewer -->
+    <string name="btn_view_logs">Ver Logs</string>
+    <string name="log_viewer_title">Registro de Actividad</string>
+    <string name="btn_refresh_logs">Actualizar</string>
+    <string name="btn_clear_logs">Limpiar Logs</string>
+    <string name="btn_share_logs">Compartir Logs</string>
+    <string name="logs_refreshed">Logs actualizados</string>
+    <string name="logs_cleared">Logs eliminados</string>
+    <string name="confirm_clear_logs_title">Confirmar</string>
+    <string name="confirm_clear_logs_message">¿Deseas eliminar todos los logs?</string>
+    <string name="share_logs_title">Compartir logs</string>
+    <string name="share_logs_subject">Kids Volume Lock - Logs</string>
+</resources>
