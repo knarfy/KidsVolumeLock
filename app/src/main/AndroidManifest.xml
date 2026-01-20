@@ -26,6 +26,13 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".LogViewerActivity"
+            android:exported="false"
+            android:label="@string/log_viewer_title"
+            android:parentActivityName=".MainActivity">
+        </activity>
+
         <service
             android:name=".VolumeLockService"
             android:enabled="true"

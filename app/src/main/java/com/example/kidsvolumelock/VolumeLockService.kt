@@ -21,6 +21,7 @@ class VolumeLockService : Service() {
     private lateinit var audioManager: AudioManager
     private val handler = Handler(Looper.getMainLooper())
     private var isRunning = false
+    private var volumeCorrections = 0
 
     companion object {
         const val CHANNEL_ID = "VolumeLockChannel"
@@ -40,27 +41,45 @@ class VolumeLockService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        preferencesManager = PreferencesManager(this)
-        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        
-        startForeground(NOTIFICATION_ID, createNotification())
-        Log.d(TAG, "Service created")
+        try {
+            preferencesManager = PreferencesManager(this)
+            audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+            
+            startForeground(NOTIFICATION_ID, createNotification())
+            Log.d(TAG, "Service created")
+            LogManager.info("VolumeLockService onCreate - Service created successfully")
+        } catch (e: Exception) {
+            LogManager.error("VolumeLockService onCreate failed", e)
+            throw e
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!isRunning) {
-            isRunning = true
-            // Start periodic volume checking
-            handler.post(volumeCheckRunnable)
-            Log.d(TAG, "Volume monitoring started with ${POLLING_INTERVAL_MS}ms interval")
+            try {
+                isRunning = true
+                volumeCorrections = 0
+                // Start periodic volume checking
+                handler.post(volumeCheckRunnable)
+                val maxPercent = preferencesManager.getMaxVolumePercent()
+                Log.d(TAG, "Volume monitoring started with ${POLLING_INTERVAL_MS}ms interval")
+                LogManager.info("VolumeLockService started - Monitoring at ${POLLING_INTERVAL_MS}ms with limit $maxPercent%")
+            } catch (e: Exception) {
+                LogManager.error("VolumeLockService onStartCommand failed", e)
+            }
         }
         return START_STICKY
     }
 
     override fun onDestroy() {
-        isRunning = false
-        handler.removeCallbacks(volumeCheckRunnable)
-        Log.d(TAG, "Service destroyed, monitoring stopped")
+        try {
+            isRunning = false
+            handler.removeCallbacks(volumeCheckRunnable)
+            Log.d(TAG, "Service destroyed, monitoring stopped")
+            LogManager.info("VolumeLockService destroyed - Total corrections: $volumeCorrections")
+        } catch (e: Exception) {
+            LogManager.error("VolumeLockService onDestroy error", e)
+        }
         super.onDestroy()
     }
 
@@ -106,17 +125,24 @@ class VolumeLockService : Service() {
     }
 
     private fun checkAndEnforceVolumeLimit() {
-        val maxPercent = preferencesManager.getMaxVolumePercent()
-        val maxVolumeLevel = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        // Calculate allowed limit
-        val allowedLimitCapped = (maxVolumeLevel * (maxPercent / 100.0)).toInt()
-        
-        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        try {
+            val maxPercent = preferencesManager.getMaxVolumePercent()
+            val maxVolumeLevel = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            // Calculate allowed limit
+            val allowedLimitCapped = (maxVolumeLevel * (maxPercent / 100.0)).toInt()
+            
+            val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
-        if (currentVolume > allowedLimitCapped) {
-            // Force volume down
-            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, allowedLimitCapped, 0)
-            Log.d(TAG, "Volume corrected: $currentVolume -> $allowedLimitCapped (max: $maxVolumeLevel, limit: $maxPercent%)")
+            if (currentVolume > allowedLimitCapped) {
+                // Force volume down
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, allowedLimitCapped, 0)
+                volumeCorrections++
+                val logMsg = "Volume corrected #$volumeCorrections: $currentVolume -> $allowedLimitCapped (max:$maxVolumeLevel, limit:$maxPercent%)"
+                Log.d(TAG, logMsg)
+                LogManager.warning(logMsg)
+            }
+        } catch (e: Exception) {
+            LogManager.error("Error in checkAndEnforceVolumeLimit", e)
         }
     }
 }

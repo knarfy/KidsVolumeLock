@@ -19,6 +19,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         prefs = PreferencesManager(this)
+        
+        // Initialize logging system
+        LogManager.init(this)
+        LogManager.info("MainActivity onCreate")
 
         setupUI()
         refreshServiceStatus()
@@ -55,10 +59,18 @@ class MainActivity : AppCompatActivity() {
         // Hide PIN button completely
         binding.btnSetPin.visibility = View.GONE
         binding.btnSetPin.setOnClickListener(null)
+        
+        // View Logs button
+        binding.btnViewLogs.setOnClickListener {
+            LogManager.info("User opened log viewer")
+            val intent = Intent(this, LogViewerActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun saveVolume(percent: Int) {
         prefs.setMaxVolumePercent(percent)
+        LogManager.info("User changed volume limit to $percent%")
         Toast.makeText(this, "Límite guardado: $percent%", Toast.LENGTH_SHORT).show()
     }
 
@@ -66,12 +78,14 @@ class MainActivity : AppCompatActivity() {
         prefs.setServiceEnabled(enable)
         val intent = Intent(this, VolumeLockService::class.java)
         if (enable) {
+            LogManager.info("User starting volume lock service")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(intent)
             } else {
                 startService(intent)
             }
         } else {
+            LogManager.info("User stopping volume lock service")
             stopService(intent)
         }
         refreshServiceStatus()
@@ -85,5 +99,11 @@ class MainActivity : AppCompatActivity() {
             binding.tvServiceStatus.text = getString(R.string.status_stopped)
             binding.btnToggleService.text = getString(R.string.btn_start_service)
         }
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        LogManager.info("MainActivity onResume")
+        refreshServiceStatus()
     }
 }

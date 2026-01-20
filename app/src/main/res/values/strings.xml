@@ -17,4 +17,17 @@
     <string name="error_pin_incorrect">PIN Incorrecto</string>
     <string name="msg_pin_set">PIN establecido correctamente</string>
     <string name="text_current_limit">Límite actual: %1$d%%</string>
+    
+    <!-- Log Viewer -->
+    <string name="btn_view_logs">Ver Logs</string>
+    <string name="log_viewer_title">Registro de Actividad</string>
+    <string name="btn_refresh_logs">Actualizar</string>
+    <string name="btn_clear_logs">Limpiar Logs</string>
+    <string name="btn_share_logs">Compartir Logs</string>
+    <string name="logs_refreshed">Logs actualizados</string>
+    <string name="logs_cleared">Logs eliminados</string>
+    <string name="confirm_clear_logs_title">Confirmar</string>
+    <string name="confirm_clear_logs_message">¿Deseas eliminar todos los logs?</string>
+    <string name="share_logs_title">Compartir logs</string>
+    <string name="share_logs_subject">Kids Volume Lock - Logs</string>
 </resources>
