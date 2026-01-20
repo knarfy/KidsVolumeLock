@@ -7,51 +7,60 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.database.ContentObserver
 import android.media.AudioManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.provider.Settings
+import android.util.Log
 import androidx.core.app.NotificationCompat
 
 class VolumeLockService : Service() {
 
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var audioManager: AudioManager
-    private lateinit var volumeObserver: VolumeObserver
     private val handler = Handler(Looper.getMainLooper())
+    private var isRunning = false
 
     companion object {
         const val CHANNEL_ID = "VolumeLockChannel"
         const val NOTIFICATION_ID = 1
+        const val POLLING_INTERVAL_MS = 200L
+        private const val TAG = "VolumeLockService"
+    }
+
+    private val volumeCheckRunnable = object : Runnable {
+        override fun run() {
+            if (isRunning) {
+                checkAndEnforceVolumeLimit()
+                handler.postDelayed(this, POLLING_INTERVAL_MS)
+            }
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
         preferencesManager = PreferencesManager(this)
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        volumeObserver = VolumeObserver(handler)
-
-        // Register ContentObserver to listen for volume settings changes
-        contentResolver.registerContentObserver(
-            Settings.System.CONTENT_URI,
-            true,
-            volumeObserver
-        )
         
         startForeground(NOTIFICATION_ID, createNotification())
+        Log.d(TAG, "Service created")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Enforce immediately on start
-        checkAndEnforceVolumeLimit()
+        if (!isRunning) {
+            isRunning = true
+            // Start periodic volume checking
+            handler.post(volumeCheckRunnable)
+            Log.d(TAG, "Volume monitoring started with ${POLLING_INTERVAL_MS}ms interval")
+        }
         return START_STICKY
     }
 
     override fun onDestroy() {
-        contentResolver.unregisterContentObserver(volumeObserver)
+        isRunning = false
+        handler.removeCallbacks(volumeCheckRunnable)
+        Log.d(TAG, "Service destroyed, monitoring stopped")
         super.onDestroy()
     }
 
@@ -107,13 +116,7 @@ class VolumeLockService : Service() {
         if (currentVolume > allowedLimitCapped) {
             // Force volume down
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, allowedLimitCapped, 0)
-        }
-    }
-
-    inner class VolumeObserver(handler: Handler) : ContentObserver(handler) {
-        override fun onChange(selfChange: Boolean) {
-            super.onChange(selfChange)
-            checkAndEnforceVolumeLimit()
+            Log.d(TAG, "Volume corrected: $currentVolume -> $allowedLimitCapped (max: $maxVolumeLevel, limit: $maxPercent%)")
         }
     }
 }

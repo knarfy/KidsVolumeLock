@@ -30,7 +30,7 @@
             android:name=".VolumeLockService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="mediaPlayback">
+            android:foregroundServiceType="specialUse">
         </service>
 
         <receiver
