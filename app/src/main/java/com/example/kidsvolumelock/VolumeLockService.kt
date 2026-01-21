@@ -5,17 +5,14 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.database.ContentObserver
+import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.Build
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
-import android.provider.Settings
 import android.util.Log
-import androidx.core.app.NotificationCompat
 
 class VolumeLockService : Service() {
 
@@ -28,13 +25,15 @@ class VolumeLockService : Service() {
         const val CHANNEL_ID = "VolumeLockChannel"
         const val NOTIFICATION_ID = 1
         private const val TAG = "VolumeLockService"
+        private const val VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION"
     }
 
-    private val volumeObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
-        override fun onChange(selfChange: Boolean) {
-            super.onChange(selfChange)
-            LogManager.info("Volume change detected by ContentObserver")
-            checkAndEnforceVolumeLimit()
+    private val volumeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == VOLUME_CHANGED_ACTION) {
+                LogManager.info("Volume change detected by BroadcastReceiver")
+                checkAndEnforceVolumeLimit()
+            }
         }
     }
 
@@ -59,21 +58,20 @@ class VolumeLockService : Service() {
                 isMonitoring = true
                 volumeCorrections = 0
                 
-                // Register ContentObserver to listen for volume changes
-                contentResolver.registerContentObserver(
-                    Settings.System.CONTENT_URI,
-                    true,
-                    volumeObserver
-                )
+                // Register BroadcastReceiver to listen for volume changes
+                val filter = IntentFilter(VOLUME_CHANGED_ACTION)
+                registerReceiver(volumeReceiver, filter)
                 
                 val maxPercent = preferencesManager.getMaxVolumePercent()
-                Log.d(TAG, "Volume monitoring started using ContentObserver")
-                LogManager.info("VolumeLockService started - Using ContentObserver with limit $maxPercent%")
+                Log.d(TAG, "Volume monitoring started using BroadcastReceiver")
+                LogManager.info("VolumeLockService started - Using BroadcastReceiver with limit $maxPercent%")
                 
                 // Do initial check
                 checkAndEnforceVolumeLimit()
             } catch (e: Exception) {
                 LogManager.error("VolumeLockService onStartCommand failed", e)
+                // If we fail to start monitoring, we should probably stop the service or try again?
+                // For now, logging error.
             }
         }
         return START_STICKY
@@ -81,10 +79,10 @@ class VolumeLockService : Service() {
 
     override fun onDestroy() {
         try {
-            isMonitoring = false
-            
-            // Unregister ContentObserver
-            contentResolver.unregisterContentObserver(volumeObserver)
+            if (isMonitoring) {
+                unregisterReceiver(volumeReceiver)
+                isMonitoring = false
+            }
             
             Log.d(TAG, "Service destroyed, monitoring stopped")
             LogManager.info("VolumeLockService destroyed - Total corrections: $volumeCorrections")
@@ -144,7 +142,9 @@ class VolumeLockService : Service() {
             
             val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
-            LogManager.info("Checking volume: current=$currentVolume, allowed=$allowedLimitCapped, max=$maxVolumeLevel, limit=$maxPercent%")
+            // Log less frequently or only on violation? 
+            // For debugging we want to see it, but we can check if it exceeds first to reduce noise if needed.
+            // LogManager.info("Checking volume: current=$currentVolume, allowed=$allowedLimitCapped, max=$maxVolumeLevel, limit=$maxPercent%")
 
             if (currentVolume > allowedLimitCapped) {
                 // Force volume down

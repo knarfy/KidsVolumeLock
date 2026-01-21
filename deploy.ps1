@@ -27,10 +27,8 @@ $status = git status --porcelain
 if ($status) {
     Write-Host "Hay cambios pendientes. Haciendo commit..." -ForegroundColor Cyan
     git add .
-    $commitMsg = Read-Host "Mensaje del commit (Enter para usar 'Update app')"
-    if ([string]::IsNullOrWhiteSpace($commitMsg)) {
-        $commitMsg = "Update app"
-    }
+    $commitMsg = "Update volume detection logic"
+    
     git commit -m $commitMsg
     Write-Host "Pushing a GitHub..." -ForegroundColor Cyan
     git push origin main
