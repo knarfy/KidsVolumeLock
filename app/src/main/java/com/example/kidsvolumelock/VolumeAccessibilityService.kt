@@ -69,6 +69,13 @@ class VolumeAccessibilityService : AccessibilityService() {
                 // Case 1: Already over or at limit -> Strictly block
                 if (currentVolume >= allowedLimit) {
                     shouldBlock = true
+                    // [FIX] Force Clamp: If volume is somehow above limit, force it down immediately. 
+                    // This prevents it from getting "stuck" above limit if we only block increases.
+                    if (currentVolume > allowedLimit) {
+                        // Use 0 flags to avoid UI/Sound if possible, or FLAG_SHOW_UI if we want feedback (maybe not). 0 is stealthier/faster.
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, allowedLimit, 0)
+                        Log.d(TAG, "Active Clamp: Forced volume to $allowedLimit from $currentVolume")
+                    }
                 }
                 // Case 2: Holding button (repeat > 0) AND close to limit (limit - 1)
                 // We assume the previous repeat (repeat-1) already pushed us to the limit.

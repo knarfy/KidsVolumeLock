@@ -53,6 +53,13 @@ class VolumeLockService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // [FIX] Suicide Pill: If Accessibility Service is enabled, this service MUST die to prevent conflict/oscillation.
+        if (isAccessibilityServiceEnabled()) {
+             LogManager.info("VolumeLockService: Accessibility Service detected. Stopping self to avoid conflict.")
+             stopSelf()
+             return START_NOT_STICKY
+        }
+
         if (!isMonitoring) {
             try {
                 isMonitoring = true
@@ -75,6 +82,21 @@ class VolumeLockService : Service() {
             }
         }
         return START_STICKY
+    }
+
+    // Checking if our Accessibility Service is enabled
+    private fun isAccessibilityServiceEnabled(): Boolean {
+        val expectedComponentName = android.content.ComponentName(this, VolumeAccessibilityService::class.java)
+        val enabledServicesSetting = android.provider.Settings.Secure.getString(contentResolver, android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: return false
+        val colonSplitter = android.text.TextUtils.SimpleStringSplitter(':')
+        colonSplitter.setString(enabledServicesSetting)
+        while (colonSplitter.hasNext()) {
+            val componentNameString = colonSplitter.next()
+            val enabledComponent = android.content.ComponentName.unflattenFromString(componentNameString)
+            if (enabledComponent != null && enabledComponent == expectedComponentName)
+                return true
+        }
+        return false
     }
 
     override fun onDestroy() {
