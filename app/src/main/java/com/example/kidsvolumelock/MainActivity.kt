@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, LogViewerActivity::class.java)
             startActivity(intent)
         }
-        }
+
 
         // Ask for notification permission on Android 13+
         if (Build.VERSION.SDK_INT >= 33) { // Android 13
