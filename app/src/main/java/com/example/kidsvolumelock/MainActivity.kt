@@ -33,8 +33,8 @@ class MainActivity : AppCompatActivity() {
 
         setupUI()
         
-        // Auto-restart service if it was enabled before app was closed
-        if (prefs.isServiceEnabled()) {
+        // Auto-restart service if it was enabled before app was closed, BUT only if Accessibility is NOT active
+        if (prefs.isServiceEnabled() && !isAccessibilityServiceEnabled()) {
             val serviceIntent = Intent(this, VolumeLockService::class.java)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(serviceIntent)
@@ -42,6 +42,10 @@ class MainActivity : AppCompatActivity() {
                 startService(serviceIntent)
             }
             LogManager.info("Auto-restarted VolumeLockService on app launch")
+        } else {
+             // Ensure legacy service is stopped if we are in Accessibility mode
+             stopService(Intent(this, VolumeLockService::class.java))
+             prefs.setServiceEnabled(false)
         }
         
         refreshServiceStatus()

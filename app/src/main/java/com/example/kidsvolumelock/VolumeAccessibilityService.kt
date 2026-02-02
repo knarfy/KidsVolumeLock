@@ -18,6 +18,15 @@ class VolumeAccessibilityService : AccessibilityService() {
         preferencesManager = PreferencesManager(this)
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         
+        // Disable the legacy VolumeLockService to prevent conflicts/loops
+        try {
+            val intent = android.content.Intent(this, VolumeLockService::class.java)
+            stopService(intent)
+            LogManager.info("Legacy VolumeLockService stopped to avoid conflicts")
+        } catch (e: Exception) {
+            LogManager.error("Failed to stop legacy service", e)
+        }
+        
         // Explicitly set flags to ensure key filtering works
         val info = serviceInfo
         // Combine with existing flags if any, or just set what we need
