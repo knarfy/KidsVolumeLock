@@ -66,28 +66,21 @@ class VolumeAccessibilityService : AccessibilityService() {
             if (event.keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
                 var shouldBlock = false
 
-                // Case 1: Already over or at limit -> Strictly block
-                if (currentVolume >= allowedLimit) {
+                // [FIX] Preventive Blocking Strategy:
+                // Block ANY volume up event if we're at limit-1 or above.
+                // This prevents the "first event gets through" race condition.
+                if (currentVolume >= allowedLimit - 1) {
                     shouldBlock = true
-                    // [FIX] Force Clamp: If volume is somehow above limit, force it down immediately. 
-                    // This prevents it from getting "stuck" above limit if we only block increases.
+                    // Active clamp if somehow we're above limit
                     if (currentVolume > allowedLimit) {
-                        // Use 0 flags to avoid UI/Sound if possible, or FLAG_SHOW_UI if we want feedback (maybe not). 0 is stealthier/faster.
                         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, allowedLimit, 0)
                         Log.d(TAG, "Active Clamp: Forced volume to $allowedLimit from $currentVolume")
                     }
                 }
-                // Case 2: Holding button (repeat > 0) AND close to limit (limit - 1)
-                // We assume the previous repeat (repeat-1) already pushed us to the limit.
-                else if (event.repeatCount > 0 && currentVolume >= allowedLimit - 1) {
-                    shouldBlock = true
-                    // Safety clamping: if we suspect we are at limit but 'currentVolume' says less, 
-                    // we might want to force check? But blocking the event is safer.
-                }
 
                 if (shouldBlock) {
                     if (event.action == KeyEvent.ACTION_DOWN) {
-                         Log.d(TAG, "Blocking Volume UP (Aggressive). Current: $currentVolume, Limit: $allowedLimit, Repeat: ${event.repeatCount}")
+                         Log.d(TAG, "Blocking Volume UP (Preventive). Current: $currentVolume, Limit: $allowedLimit, Repeat: ${event.repeatCount}")
                     }
                     // Prevent the event from propagating
                     return true 

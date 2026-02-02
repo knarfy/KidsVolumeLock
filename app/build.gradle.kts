@@ -11,7 +11,7 @@ android {
         applicationId = "com.example.kidsvolumelock"
         minSdk = 26 // Android 8.0+ coverage is fine, user has Android 14
         targetSdk = 34
-        versionCode = 2
+        versionCode = 3
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
