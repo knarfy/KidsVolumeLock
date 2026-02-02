@@ -17,8 +17,19 @@ class VolumeAccessibilityService : AccessibilityService() {
         super.onServiceConnected()
         preferencesManager = PreferencesManager(this)
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        LogManager.info("VolumeAccessibilityService connected")
-        Log.d(TAG, "Service connected")
+        
+        // Explicitly set flags to ensure key filtering works
+        val info = serviceInfo
+        // Combine with existing flags if any, or just set what we need
+        info.flags = android.accessibilityservice.AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS or 
+                     android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
+        serviceInfo = info
+        
+        LogManager.info("VolumeAccessibilityService connected and flags set")
+        Log.d(TAG, "Service connected with flags: ${info.flags}")
+        
+        // Visual confirmation for user
+        // android.widget.Toast.makeText(this, "Bloqueo Estricto Activo", android.widget.Toast.LENGTH_SHORT).show()
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
