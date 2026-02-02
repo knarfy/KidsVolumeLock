@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.Manifest
+import android.content.pm.PackageManager
 import com.example.kidsvolumelock.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -77,6 +79,15 @@ class MainActivity : AppCompatActivity() {
             LogManager.info("User opened log viewer")
             val intent = Intent(this, LogViewerActivity::class.java)
             startActivity(intent)
+        }
+        }
+
+        // Ask for notification permission on Android 13+
+        if (Build.VERSION.SDK_INT >= 33) { // Android 13
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                LogManager.info("Requesting POST_NOTIFICATIONS permission")
+                requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
         }
     }
 
