@@ -1,11 +1,16 @@
 package com.example.kidsvolumelock
 
+import android.accessibilityservice.AccessibilityService
+
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
+import android.provider.Settings
+import android.text.TextUtils
+import android.content.ComponentName
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
 import android.content.pm.PackageManager
@@ -81,6 +86,8 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Check Accessibility Service
+        checkAccessibilityPermission()
 
         // Ask for notification permission on Android 13+
         if (Build.VERSION.SDK_INT >= 33) { // Android 13
@@ -128,5 +135,43 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         LogManager.info("MainActivity onResume")
         refreshServiceStatus()
+        checkAccessibilityPermission()
+    }
+
+    private fun checkAccessibilityPermission() {
+        if (!isAccessibilityServiceEnabled(VolumeAccessibilityService::class.java)) {
+            // Show a toast or update UI to warn user
+             Toast.makeText(this, "¡Activa Accesibilidad para Bloqueo Estricto!", Toast.LENGTH_LONG).show()
+             // Optionally valid to open settings directly or show a button
+             // For now, let's open settings if it's the first run or make it easy
+             // But to avoid annoyance, maybe just a button in the UI? 
+             // Let's add a button logic or re-purpose the setPin button or add a new one?
+             // Since SetPin is hidden, let's just use a Toast for now and maybe open settings if user clicks something?
+             // Actually, let's auto-open settings if it's critical, or ask via dialog.
+             // Given user request simplicity, let's just toast and maybe add a logic.
+             // Better: binding.btnSetPin could be "Enable Strict Mode"
+             binding.btnSetPin.visibility = View.VISIBLE
+             binding.btnSetPin.text = "Activar Bloqueo Total"
+             binding.btnSetPin.setOnClickListener {
+                 val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                 startActivity(intent)
+             }
+        } else {
+             binding.btnSetPin.visibility = View.GONE
+        }
+    }
+
+    private fun isAccessibilityServiceEnabled(service: Class<out AccessibilityService>): Boolean {
+        val expectedComponentName = ComponentName(this, service)
+        val enabledServicesSetting = Settings.Secure.getString(contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: return false
+        val colonSplitter = TextUtils.SimpleStringSplitter(':')
+        colonSplitter.setString(enabledServicesSetting)
+        while (colonSplitter.hasNext()) {
+            val componentNameString = colonSplitter.next()
+            val enabledComponent = ComponentName.unflattenFromString(componentNameString)
+            if (enabledComponent != null && enabledComponent == expectedComponentName)
+                return true
+        }
+        return false
     }
 }
