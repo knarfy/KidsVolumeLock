@@ -33,32 +33,39 @@ class VolumeAccessibilityService : AccessibilityService() {
         // Only handle UP and DOWN volume keys
         if (event.keyCode == KeyEvent.KEYCODE_VOLUME_UP || event.keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
             
-            // We only care about the ACTION_DOWN event (when key is pressed)
-            // ACTION_UP will follow, we generally want to block the whole sequence if needed, 
-            // but blocking DOWN is usually enough to prevent the action.
-            // However, to be safe and consistent, we check both or just DOWN.
-            
             val maxPercent = preferencesManager.getMaxVolumePercent()
             val maxVolumeLevel = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
             val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
             val allowedLimit = (maxVolumeLevel * (maxPercent / 100.0)).toInt()
 
-            Log.d(TAG, "KeyEvent: ${event.keyCode} Action: ${event.action} Vol: $currentVolume Limit: $allowedLimit")
-
+            // Aggressive Logic for "Hold to Bypass" issue:
+            // If user holds volume up, the system repeats events rapidly. 
+            // AudioManager might report a lagged volume (e.g. 4) while system is already processing 5.
+            // FIX: If event is repeating (holding) AND we are within 1 step of limit, BLOCK IT.
+            
             if (event.keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-                // If we are already at or above limit, BLOCK the volume up key
+                var shouldBlock = false
+
+                // Case 1: Already over or at limit -> Strictly block
                 if (currentVolume >= allowedLimit) {
+                    shouldBlock = true
+                }
+                // Case 2: Holding button (repeat > 0) AND close to limit (limit - 1)
+                // We assume the previous repeat (repeat-1) already pushed us to the limit.
+                else if (event.repeatCount > 0 && currentVolume >= allowedLimit - 1) {
+                    shouldBlock = true
+                    // Safety clamping: if we suspect we are at limit but 'currentVolume' says less, 
+                    // we might want to force check? But blocking the event is safer.
+                }
+
+                if (shouldBlock) {
                     if (event.action == KeyEvent.ACTION_DOWN) {
-                        LogManager.info("Blocking Volume UP. Current: $currentVolume, Limit: $allowedLimit")
+                         Log.d(TAG, "Blocking Volume UP (Aggressive). Current: $currentVolume, Limit: $allowedLimit, Repeat: ${event.repeatCount}")
                     }
-                    return true // Consume event (Prohibit default action)
+                    // Prevent the event from propagating
+                    return true 
                 }
             }
-            // Optional: Block volume down? No, usually we want to allow lowering volume.
-             
-             // Extra safety: If somehow volume is strictly above limit (e.g. changed by other app), 
-             // and they press ANY volume key, we might want to force it down?
-             // But the service logic should handle that. The key interception is specifically to stop the "Up".
         }
         return super.onKeyEvent(event)
     }
