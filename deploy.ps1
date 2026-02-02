@@ -52,7 +52,7 @@ while ($attempt -lt $maxAttempts -and -not $buildComplete) {
     Write-Host "  Intento $attempt/$maxAttempts..." -ForegroundColor Gray
     
     # Get JSON output for parsing
-    $runJson = & $ghPath run list --repo $repoName --limit 1 --json status, conclusion 2>&1 | Out-String | ConvertFrom-Json
+    $runJson = & $ghPath run list --repo $repoName --limit 1 --json status, conclusion | Out-String | ConvertFrom-Json
     
     # Check if run exists
     if ($runJson) {
@@ -87,7 +87,7 @@ Write-Host ""
 Write-Host "[4/6] Descargando APK..." -ForegroundColor Yellow
 
 # Seleccionar el run más reciente automáticamente
-$runInfo = & $ghPath run list --repo $repoName --limit 1 --json databaseId, conclusion 2>&1 | ConvertFrom-Json
+$runInfo = & $ghPath run list --repo $repoName --limit 1 --json databaseId, conclusion | ConvertFrom-Json
 $runId = $runInfo[0].databaseId
 
 Write-Host "  Run ID: $runId" -ForegroundColor Gray
