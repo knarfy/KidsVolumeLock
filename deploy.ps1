@@ -42,6 +42,8 @@ else {
 Write-Host ""
 Write-Host "[3/6] Esperando build de GitHub Actions..." -ForegroundColor Yellow
 Start-Sleep -Seconds 5
+$currentSha = git rev-parse HEAD
+Write-Host "  Commit SHA actual: $currentSha" -ForegroundColor Gray
 
 $maxAttempts = 30
 $attempt = 0
@@ -52,8 +54,8 @@ while ($attempt -lt $maxAttempts -and -not $buildComplete) {
     Write-Host "  Intento $attempt/$maxAttempts..." -ForegroundColor Gray
     
     # Get JSON output for parsing
-    # Use quotes for comma separated arguments in PowerShell
-    $runJson = & $ghPath run list --repo $repoName --limit 1 --json "status,conclusion" | Out-String | ConvertFrom-Json
+    # Filter by current commit SHA to ensure we get the right build
+    $runJson = & $ghPath run list --repo $repoName --commit $currentSha --limit 1 --json "status,conclusion" | Out-String | ConvertFrom-Json
     
     # Check if run exists
     if ($runJson) {
@@ -87,8 +89,8 @@ if (-not $buildComplete) {
 Write-Host ""
 Write-Host "[4/6] Descargando APK..." -ForegroundColor Yellow
 
-# Seleccionar el run más reciente automáticamente
-$runInfo = & $ghPath run list --repo $repoName --limit 1 --json "databaseId,conclusion" | ConvertFrom-Json
+# Seleccionar el run más reciente para este commit
+$runInfo = & $ghPath run list --repo $repoName --commit $currentSha --limit 1 --json "databaseId,conclusion" | ConvertFrom-Json
 $runId = $runInfo[0].databaseId
 
 Write-Host "  Run ID: $runId" -ForegroundColor Gray
