@@ -13,6 +13,9 @@ import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.view.KeyEvent
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 
 class VolumeLockService : Service() {
 
@@ -20,6 +23,7 @@ class VolumeLockService : Service() {
     private lateinit var audioManager: AudioManager
     private var volumeCorrections = 0
     private var isMonitoring = false
+    private var mediaSession: MediaSessionCompat? = null
 
     companion object {
         const val CHANNEL_ID = "VolumeLockChannel"
@@ -43,64 +47,116 @@ class VolumeLockService : Service() {
             preferencesManager = PreferencesManager(this)
             audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             
+            // Initialize MediaSession for volume key interception
+            setupMediaSession()
+            
             startForeground(NOTIFICATION_ID, createNotification())
-            Log.d(TAG, "Service created")
-            LogManager.info("VolumeLockService onCreate - Service created successfully")
+            Log.d(TAG, "Service created with MediaSession")
+            LogManager.info("VolumeLockService onCreate - Service created with MediaSession")
         } catch (e: Exception) {
             LogManager.error("VolumeLockService onCreate failed", e)
             throw e
         }
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // [FIX] Suicide Pill: If Accessibility Service is enabled, this service MUST die to prevent conflict/oscillation.
-        if (isAccessibilityServiceEnabled()) {
-             LogManager.info("VolumeLockService: Accessibility Service detected. Stopping self to avoid conflict.")
-             stopSelf()
-             return START_NOT_STICKY
+    private fun setupMediaSession() {
+        try {
+            mediaSession = MediaSessionCompat(this, TAG).apply {
+                // Set playback state to allow media button events
+                setPlaybackState(
+                    PlaybackStateCompat.Builder()
+                        .setState(PlaybackStateCompat.STATE_PLAYING, 0, 1.0f)
+                        .build()
+                )
+                
+                // Set callback to intercept volume key events
+                setCallback(object : MediaSessionCompat.Callback() {
+                    override fun onMediaButtonEvent(mediaButtonEvent: Intent?): Boolean {
+                        val keyEvent = mediaButtonEvent?.getParcelableExtra<KeyEvent>(Intent.EXTRA_KEY_EVENT)
+                        
+                        if (keyEvent != null && keyEvent.action == KeyEvent.ACTION_DOWN) {
+                            when (keyEvent.keyCode) {
+                                KeyEvent.KEYCODE_VOLUME_UP -> {
+                                    return handleVolumeUp()
+                                }
+                                KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                                    // Allow volume down always
+                                    return false
+                                }
+                            }
+                        }
+                        return super.onMediaButtonEvent(mediaButtonEvent)
+                    }
+                })
+                
+                // Activate the session
+                isActive = true
+            }
+            LogManager.info("MediaSession initialized and activated")
+        } catch (e: Exception) {
+            LogManager.error("Failed to setup MediaSession", e)
         }
+    }
 
+    private fun handleVolumeUp(): Boolean {
+        try {
+            val maxPercent = preferencesManager.getMaxVolumePercent()
+            val maxVolumeLevel = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+            val allowedLimit = (maxVolumeLevel * (maxPercent / 100.0)).toInt()
+
+            // Preventive blocking: block if at or above limit-1
+            if (currentVolume >= allowedLimit - 1) {
+                Log.d(TAG, "Blocking VOLUME_UP: current=$currentVolume, limit=$allowedLimit")
+                LogManager.info("MediaSession blocked VOLUME_UP: current=$currentVolume, limit=$allowedLimit")
+                
+                // Active clamp if somehow above limit
+                if (currentVolume > allowedLimit) {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, allowedLimit, 0)
+                    volumeCorrections++
+                    LogManager.warning("Forced volume down to $allowedLimit from $currentVolume")
+                }
+                
+                return true // Consume the event (block it)
+            }
+            
+            // Allow the volume up
+            return false
+        } catch (e: Exception) {
+            LogManager.error("Error in handleVolumeUp", e)
+            return false
+        }
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!isMonitoring) {
             try {
                 isMonitoring = true
                 volumeCorrections = 0
                 
-                // Register BroadcastReceiver to listen for volume changes
+                // Register BroadcastReceiver as fallback for volume changes
                 val filter = IntentFilter(VOLUME_CHANGED_ACTION)
                 registerReceiver(volumeReceiver, filter)
                 
                 val maxPercent = preferencesManager.getMaxVolumePercent()
-                Log.d(TAG, "Volume monitoring started using BroadcastReceiver")
-                LogManager.info("VolumeLockService started - Using BroadcastReceiver with limit $maxPercent%")
+                Log.d(TAG, "Volume monitoring started using MediaSession + BroadcastReceiver")
+                LogManager.info("VolumeLockService started - Using MediaSession with limit $maxPercent%")
                 
                 // Do initial check
                 checkAndEnforceVolumeLimit()
             } catch (e: Exception) {
                 LogManager.error("VolumeLockService onStartCommand failed", e)
-                // If we fail to start monitoring, we should probably stop the service or try again?
-                // For now, logging error.
             }
         }
         return START_STICKY
     }
 
-    // Checking if our Accessibility Service is enabled
-    private fun isAccessibilityServiceEnabled(): Boolean {
-        val expectedComponentName = android.content.ComponentName(this, VolumeAccessibilityService::class.java)
-        val enabledServicesSetting = android.provider.Settings.Secure.getString(contentResolver, android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES) ?: return false
-        val colonSplitter = android.text.TextUtils.SimpleStringSplitter(':')
-        colonSplitter.setString(enabledServicesSetting)
-        while (colonSplitter.hasNext()) {
-            val componentNameString = colonSplitter.next()
-            val enabledComponent = android.content.ComponentName.unflattenFromString(componentNameString)
-            if (enabledComponent != null && enabledComponent == expectedComponentName)
-                return true
-        }
-        return false
-    }
-
     override fun onDestroy() {
         try {
+            // Release MediaSession
+            mediaSession?.release()
+            mediaSession = null
+            
             if (isMonitoring) {
                 unregisterReceiver(volumeReceiver)
                 isMonitoring = false
