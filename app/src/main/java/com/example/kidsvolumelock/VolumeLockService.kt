@@ -50,6 +50,7 @@ class VolumeLockService : Service() {
             LogManager.error("VolumeLockService onCreate failed", e)
             throw e
         }
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!isMonitoring) {
