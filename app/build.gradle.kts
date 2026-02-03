@@ -12,9 +12,9 @@ android {
         minSdk = 26 // Android 8.0+ coverage is fine, user has Android 14
         targetSdk = 34
         versionCode = 4
-        versionName = \"1.0\"
+        versionName = "1.0"
 
-        testInstrumentationRunner = \"androidx.test.runner.AndroidJUnitRunner\"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
