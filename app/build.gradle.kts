@@ -11,7 +11,7 @@ android {
         applicationId = "com.example.kidsvolumelock"
         minSdk = 26 // Android 8.0+ coverage is fine, user has Android 14
         targetSdk = 34
-        versionCode = 4
+        versionCode = 5
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -47,7 +47,6 @@ dependencies {
     implementation("com.google.android.material:material:1.10.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.media:media:1.7.0") // MediaSessionCompat
     
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
