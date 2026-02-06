@@ -11,8 +11,8 @@ android {
         applicationId = "com.example.kidsvolumelock"
         minSdk = 26 // Android 8.0+ coverage is fine, user has Android 14
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.0"
+        versionCode = 6
+        versionName = "1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
