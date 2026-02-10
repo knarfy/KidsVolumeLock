@@ -26,7 +26,7 @@ class VolumeLockService : Service() {
     private var isMonitoring = false
     private var isVolumeReceiverRegistered = false
     private var isScreenReceiverRegistered = false
-    private var isScreenReceiverRegistered = false
+
     private var lastVolumeChangeTimestamp = 0L
     private var cachedMaxVolumePercent = 50 // Default safe value
 
