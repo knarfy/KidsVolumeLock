@@ -1,0 +1,80 @@
+﻿
+02-07 02:01:08.870  2580  2619 D 
+HwGameAssistantController: UPDATE: 
+mCurFgPkg=com.example.kidsvolumelock, 
+mCurFgPid=11046, mIsCurGame=false
+02-07 02:01:08.900 11046 11046 D ActivityThread: 
+Won't deliver top position change in state=5
+02-07 02:01:08.904 11046 11046 I ActivityThread: 
+Performing restart of ActivityRecord{fc4fbf8 
+token=android.os.BinderProxy@eb3b75b {com.example.kid
+svolumelock/com.example.kidsvolumelock.MainActivity}}
+ start=false callers:android.app.servertransaction.Tr
+ansactionExecutor.performLifecycleSequence:264 androi
+d.app.servertransaction.TransactionExecutor.cycleToPa
+th:219 android.app.servertransaction.TransactionExecu
+tor.executeLifecycleState:191 android.app.servertrans
+action.TransactionExecutor.execute:106 
+android.app.ActivityThread$H.handleMessage:3078 
+android.os.Handler.dispatchMessage:117 
+android.os.Looper.loopOnce:210 
+android.os.Looper.loop:302 
+android.app.ActivityThread.main:9675 
+java.lang.reflect.Method.invoke:-2 
+02-07 02:01:08.928  2580  4458 I AppEyeTopApp: 
+handleTopAppChange, fg, enable pid=11046, uid=10252 
+time:1640455079
+02-07 02:01:08.933  2580  2858 D 
+HwActivityManagerServiceEx: notifyAppToTop 
+pid:11046, enable:1
+02-07 02:01:09.015 11046 11046 D RtgSched: 
+resetRtgSchedHandle failed enable:1
+02-07 02:01:09.029 11046 11046 I VRI[MainActivity]: 
+send MSG_WINDOW_FOCUS_CHANGED msg
+02-07 02:01:09.041  2580  8697 V 
+InputMethodManagerService: Creating new session for 
+client ClientState{6622d10 mUid=10252 mPid=11046 
+mSelfReportedDisplayId=0}
+02-07 02:01:09.041  2580  8697 V 
+InputMethodManagerService: Creating new 
+accessibility sessions for client 
+ClientState{6622d10 mUid=10252 mPid=11046 
+mSelfReportedDisplayId=0}
+02-07 02:01:09.047  2580  8753 V 
+InputMethodManagerService: Enabling: 
+SessionState{uid 10252 pid 11046 method 2f04657 
+session f2286cc channel ClientState{6622d10 
+mUid=10252 mPid=11046 mSelfReportedDisplayId=0} 
+(server)}
+02-07 02:01:17.879  2580  2858 D 
+HwActivityManagerServiceEx: notifyAppToTop 
+pid:11046, enable:0
+02-07 02:01:17.880 11046 11046 D RtgSched: 
+resetRtgSchedHandle failed enable:0
+02-07 02:01:17.894 11046 11046 I VRI[MainActivity]: 
+send MSG_WINDOW_FOCUS_CHANGED msg
+02-07 02:01:19.910  2580  4458 I AppEyeTopApp: 
+handleTopAppChange, bg, disable pid=11046, uid=10252
+02-07 02:01:43.574  3553 12300 I AppFastHibernation: 
+    AppInfo {Uid:10252 
+Pkg:com.example.kidsvolumelock Pids:[11046]}
+02-07 02:01:43.575  3553  4196 I AppFastHibernation: 
+    AppInfo {Uid:10252 
+Pkg:com.example.kidsvolumelock Pids:[11046]}
+02-07 02:01:43.581  3553  4196 I AppFastHibernation: 
+fast F_Z process uid: 10252 pkg: 
+com.example.kidsvolumelock pids: [11046]
+02-07 02:01:43.582  2151  2151 I Pged-CGroup: attach 
+pid ok, pid: 11046, path: Group_2039624199
+02-07 02:01:43.583  3553  4196 D PgedBinderAdapter: 
+F_Z ok, pid: [11046]
+02-07 02:01:44.586  2151  2151 I Pged-CGroup: detach 
+pid ok, pid: 11046, path: Group_2039624199
+02-07 02:01:44.586  3553  4196 D PgedBinderAdapter: 
+unF_Z ok, pid: [11046]
+02-07 02:02:14.663 11046 11046 V AudioManager: 
+getStreamVolume streamType: 3 volume: 4
+02-07 02:02:14.663 11046 11046 V AudioManager: 
+getStreamMaxVolume  treamType: 3
+
+

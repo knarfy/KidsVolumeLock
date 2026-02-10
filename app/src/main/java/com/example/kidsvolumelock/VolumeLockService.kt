@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
@@ -20,32 +21,54 @@ class VolumeLockService : Service() {
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var audioManager: AudioManager
     private lateinit var powerManager: PowerManager
+    private lateinit var sharedPreferences: SharedPreferences
     private var volumeCorrections = 0
     private var isMonitoring = false
     private var isVolumeReceiverRegistered = false
     private var isScreenReceiverRegistered = false
+    private var isScreenReceiverRegistered = false
     private var lastVolumeChangeTimestamp = 0L
+    private var cachedMaxVolumePercent = 50 // Default safe value
+
+    private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        if (key == PreferencesManager.KEY_MAX_VOLUME_PERCENT) {
+            val newPercent = sharedPreferences.getInt(key, 50)
+            cachedMaxVolumePercent = newPercent
+            LogManager.info("🔄 Service updated cached max volume: $newPercent%")
+            // Re-check immediately upon setting change
+            checkAndEnforceVolumeLimit()
+        }
+    }
 
     companion object {
         const val CHANNEL_ID = "VolumeLockChannel"
         const val NOTIFICATION_ID = 1
         private const val TAG = "VolumeLockService"
         private const val VOLUME_CHANGED_ACTION = "android.media.VOLUME_CHANGED_ACTION"
+        private const val EXTRA_VOLUME_STREAM_TYPE = "android.media.EXTRA_VOLUME_STREAM_TYPE"
     }
 
     private val volumeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == VOLUME_CHANGED_ACTION) {
-                val timestamp = System.currentTimeMillis()
-                val timeSinceLastChange = if (lastVolumeChangeTimestamp > 0) {
-                    timestamp - lastVolumeChangeTimestamp
-                } else {
-                    0L
-                }
-                lastVolumeChangeTimestamp = timestamp
+                // Filter by stream type!
+                val streamType = intent.getIntExtra(EXTRA_VOLUME_STREAM_TYPE, -1)
                 
-                LogManager.info("📢 Volume change detected by BroadcastReceiver (${timeSinceLastChange}ms since last)")
-                checkAndEnforceVolumeLimit()
+                // Only act if it's STREAM_MUSIC or if the extra is missing (safety)
+                if (streamType == AudioManager.STREAM_MUSIC || streamType == -1) {
+                    val timestamp = System.currentTimeMillis()
+                    val timeSinceLastChange = if (lastVolumeChangeTimestamp > 0) {
+                        timestamp - lastVolumeChangeTimestamp
+                    } else {
+                        0L
+                    }
+                    lastVolumeChangeTimestamp = timestamp
+                    
+                    // LogManager.info("📢 Volume change detected (stream=$streamType, ${timeSinceLastChange}ms since last)")
+                    checkAndEnforceVolumeLimit()
+                } else {
+                     // LogManager.info("🔇 Ignored volume change for stream $streamType")
+                }
             }
         }
     }
@@ -75,6 +98,9 @@ class VolumeLockService : Service() {
         super.onCreate()
         try {
             preferencesManager = PreferencesManager(this)
+            // Access raw prefs to register listener
+            sharedPreferences = getSharedPreferences("kids_volume_prefs", Context.MODE_PRIVATE)
+            
             audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
             
@@ -103,9 +129,14 @@ class VolumeLockService : Service() {
                 // Register BroadcastReceiver for screen events
                 registerScreenReceiver()
                 
-                val maxPercent = preferencesManager.getMaxVolumePercent()
+                // Register Preference Listener
+                sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
+                
+                // Load initial value
+                cachedMaxVolumePercent = preferencesManager.getMaxVolumePercent()
+                
                 Log.d(TAG, "Volume monitoring started using BroadcastReceiver")
-                LogManager.info("✅ VolumeLockService started - Using BroadcastReceiver with limit $maxPercent%")
+                LogManager.info("✅ VolumeLockService started - Using BroadcastReceiver with limit $cachedMaxVolumePercent%")
                 logServiceState("onStartCommand")
                 
                 // Do initial check
@@ -129,6 +160,7 @@ class VolumeLockService : Service() {
             if (isMonitoring) {
                 unregisterVolumeReceiver()
                 unregisterScreenReceiver()
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
                 isMonitoring = false
             }
             
@@ -292,15 +324,17 @@ class VolumeLockService : Service() {
     }
 
     private fun checkAndEnforceVolumeLimit() {
+        // Debounce/Rate limit checks?
         val startTime = System.currentTimeMillis()
         
         try {
-            val maxPercent = preferencesManager.getMaxVolumePercent()
+            // Use cached value instead of reading from disk/IPC every time
+            val maxPercent = cachedMaxVolumePercent
             val maxVolumeLevel = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
             val allowedLimitCapped = (maxVolumeLevel * (maxPercent / 100.0)).toInt()
             val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
-
-            LogManager.info("🔍 Checking volume: current=$currentVolume, allowed=$allowedLimitCapped, max=$maxVolumeLevel, limit=$maxPercent%")
+            
+            // LogManager.info("🔍 Checking volume: current=$currentVolume, allowed=$allowedLimitCapped, max=$maxVolumeLevel, limit=$maxPercent%")
 
             if (currentVolume > allowedLimitCapped) {
                 val beforeCorrection = System.currentTimeMillis()
@@ -314,8 +348,9 @@ class VolumeLockService : Service() {
                 Log.d(TAG, logMsg)
                 LogManager.warning(logMsg)
             } else {
-                val totalTime = System.currentTimeMillis() - startTime
-                LogManager.info("✅ Volume OK: $currentVolume <= $allowedLimitCapped [check took ${totalTime}ms]")
+                // DON'T LOG ON SUCCESS TO AVOID SPAM
+                // val totalTime = System.currentTimeMillis() - startTime
+                // LogManager.info("✅ Volume OK: $currentVolume <= $allowedLimitCapped [check took ${totalTime}ms]")
             }
         } catch (e: Exception) {
             val totalTime = System.currentTimeMillis() - startTime

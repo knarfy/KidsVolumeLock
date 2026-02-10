@@ -10,7 +10,7 @@ class PreferencesManager(context: Context) {
     private val prefs = context.getSharedPreferences("kids_volume_prefs", Context.MODE_PRIVATE)
 
     companion object {
-        private const val KEY_MAX_VOLUME_PERCENT = "max_volume_percent"
+        const val KEY_MAX_VOLUME_PERCENT = "max_volume_percent"
         private const val KEY_PIN = "security_pin"
         private const val Key_SERVICE_ENABLED = "service_enabled_flag" // to auto-start if it was running
     }

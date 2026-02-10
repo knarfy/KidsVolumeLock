@@ -1,0 +1,453 @@
+﻿
+02-07 02:01:08.866  2580  8697 W 
+HwActivityTaskManagerServiceEx: appSwitch from: 
+com.hihonor.android.launcher to: 
+com.example.kidsvolumelock
+02-07 02:01:08.869  3532  9079 I 
+EventManagerService: app switch now pkg: 
+com.example.kidsvolumelock now uid:10252
+02-07 02:01:08.870  2580  2619 D 
+HwGameAssistantController: UPDATE: 
+mCurFgPkg=com.example.kidsvolumelock, 
+mCurFgPid=11046, mIsCurGame=false
+02-07 02:01:08.891  3141  3233 D WindowManagerShell: 
+onActivityRestartAttempt: ComponentInfo{com.example.k
+idsvolumelock/com.example.kidsvolumelock.MainActivity
+}
+02-07 02:01:08.892  2580  3251 D HwWindowStateEx: 
+construct win 
+com.android.server.wm.HwWindowStateEx@16f8809,comp Co
+mponentInfo{com.example.kidsvolumelock/com.example.ki
+dsvolumelock.MainActivity},mLayoutInCutoutLandscape 
+false
+02-07 02:01:08.893  2580  3251 V WindowManager: 
+Attaching Window{7e5da0e u0 SnapshotStartingWindow 
+for taskId=634} token=ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=false mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}
+02-07 02:01:08.904 11046 11046 I ActivityThread: 
+Performing restart of ActivityRecord{fc4fbf8 
+token=android.os.BinderProxy@eb3b75b {com.example.kid
+svolumelock/com.example.kidsvolumelock.MainActivity}}
+ start=false callers:android.app.servertransaction.Tr
+ansactionExecutor.performLifecycleSequence:264 androi
+d.app.servertransaction.TransactionExecutor.cycleToPa
+th:219 android.app.servertransaction.TransactionExecu
+tor.executeLifecycleState:191 android.app.servertrans
+action.TransactionExecutor.execute:106 
+android.app.ActivityThread$H.handleMessage:3078 
+android.os.Handler.dispatchMessage:117 
+android.os.Looper.loopOnce:210 
+android.os.Looper.loop:302 
+android.app.ActivityThread.main:9675 
+java.lang.reflect.Method.invoke:-2 
+02-07 02:01:08.907  2580 12360 I DE J DES: [effect] 
+Pg pkg:com.example.kidsvolumelock
+02-07 02:01:08.909  2580  2608 I UsageStatsService: 
+reportEvent : component= ComponentInfo{com.example.ki
+dsvolumelock/com.example.kidsvolumelock.MainActivity}
+ eventType= 1
+02-07 02:01:08.923  2580  2609 I 
+HwWindowManagerServiceEx: canSetReadyAdvance  : true 
+ActivityRecord: ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=false mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}
+02-07 02:01:08.926  2580  2609 I 
+HwWindowManagerServiceEx: canSetReadyAdvance  : true 
+ActivityRecord: ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}
+02-07 02:01:08.927  2580  2609 V WindowManager: 
+Loading animations: layout params 
+pkg=com.example.kidsvolumelock resId=0x10302ff
+02-07 02:01:08.927  2580  2609 I WMTransition: Start 
+calculating TransitionInfo based on participants: 
+{ActivityRecord{97285c9 u0 com.hihonor.android.launch
+er/.unihome.UniHomeLauncher t462 mVisible=true 
+mOccludesParent=true mode=fullscreen boundsRect(0, 0 
+- 1920, 1200)}, ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}, Task{c2b5f69 #634 
+type=standard A=10252:com.example.kidsvolumelock}, 
+WallpaperWindowToken{c8273ea 
+token=android.os.Binder@c712fd5}}
+02-07 02:01:08.928  2580  2609 I WMTransition: 
+Initial targets: {645=Task{c2b5f69 #634 
+type=standard A=10252:com.example.kidsvolumelock}, 
+735=ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}, 
+821=ActivityRecord{97285c9 u0 com.hihonor.android.lau
+ncher/.unihome.UniHomeLauncher t462 mVisible=true 
+mOccludesParent=true mode=fullscreen boundsRect(0, 0 
+- 1920, 1200)}}
+02-07 02:01:08.928  2580  2609 I WMTransition: Final 
+targets: [Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock}, Task{814b585 
+#461 type=home}]
+02-07 02:01:08.932  2580  2609 I 
+HwWindowManagerServiceEx: 
+constructHnTransitionAnimationInfo type: open 
+activity : ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}
+02-07 02:01:08.937  2580  2605 V WindowManager: Sent 
+Transition #1890 createdAt=02-07 02:01:08.865 via 
+request=TransitionRequestInfo { type = TO_FRONT, 
+triggerTask = TaskInfo{userId=0 taskId=634 
+displayId=0 isRunning=true baseIntent=Intent { 
+act=android.intent.action.MAIN 
+cat=[android.intent.category.LAUNCHER] 
+flg=0x10200000 
+cmp=com.example.kidsvolumelock/.MainActivity } baseAc
+tivity=ComponentInfo{com.example.kidsvolumelock/com.e
+xample.kidsvolumelock.MainActivity} topActivity=Compo
+nentInfo{com.example.kidsvolumelock/com.example.kidsv
+olumelock.MainActivity} origActivity=null realActivit
+y=ComponentInfo{com.example.kidsvolumelock/com.exampl
+e.kidsvolumelock.MainActivity} numActivities=1 
+lastActiveTime=1640440530 isSupportsHwFreeForm=true 
+appOrientationPolicy=1 
+affinity=10252:com.example.kidsvolumelock 
+freeformPaddingType=0 
+shouldFreeformSetSurfaceCorner=false 
+supportsHnSplitScreenMultiWindow=true 
+supportsHnTopBotSplitScreenfalse 
+supportsMultiWindow=true resizeMode=1 
+isResizeable=true minWidth=-1 minHeight=-1 
+defaultMinSize=220 token=WCT{RemoteToken{bafacc6 
+Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock}}} 
+topActivityType=1 pictureInPictureParams=null 
+isAutoRemoveRecents=false 
+shouldDockBigOverlays=false 
+launchIntoPipHostTaskId=-1 
+lastParentTaskIdBeforePip=-1 
+displayCutoutSafeInsets=null 
+topActivityInfo=ActivityInfo{c509216 
+com.example.kidsvolumelock.MainActivity} 
+windowMode=1 launchCookies=[] 
+positionInParent=Point(0, 0) parentTaskId=-1 
+isFocused=true isVisible=false 
+isFreeformEnterPip=false isVisibleRequested=false 
+isSleeping=false topActivityInSizeCompat=false 
+topActivityEligibleForLetterboxEducation= false 
+topActivityLetterboxed= false isFromDoubleTap= false 
+topActivityLetterboxVerticalPosition= -1 
+topActivityLetterboxHorizontalPosition= -1 
+topActivityLetterboxWidth=-1 
+topActivityLetterboxHeight=-1 locusId=null 
+displayAreaFeatureId=1 
+cameraCompatControlState=hidden 
+targetScaleForVerticalInwardFold=1.0}, 
+remoteTransition = RemoteTransition { 
+remoteTransition = 
+android.window.IRemoteTransition$Stub$Proxy@ac32f41, 
+backRemoteTransition = , appThread = 
+android.app.IApplicationThread$Stub$Proxy@ac71ce6, 
+debugName = null }, displayChange = null }
+02-07 02:01:08.937  2580  2605 V WindowManager:     
+info={id=1890 t=TO_FRONT f=0x0 trk=0 
+includeEmbeddedWindow=false isKeyGuardLocked=false 
+r=[0@Point(0, 0)#false] c=[{WCT{RemoteToken{bafacc6 
+Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock}}} m=TO_FRONT 
+f=MOVE_TO_TOP 
+leash=Surface(name=Task=634)/@0x7951487 sb=Rect(0, 0 
+- 1920, 1200) eb=Rect(0, 0 - 1920, 1200) d=0 
+mSkipAnimation=false taskId = 
+0},{WCT{RemoteToken{35f4437 Task{814b585 #461 
+type=home}}} m=TO_BACK f=SHOW_WALLPAPER 
+leash=Surface(name=Task=461)/@0xd84990c sb=Rect(0, 0 
+- 1920, 1200) eb=Rect(0, 0 - 1920, 1200) d=0 
+mSkipAnimation=false taskId = 0}]}
+02-07 02:01:08.947  2580  2609 I HwTaskEx: 
+isSupportPkgAdjustMinWidth mActivityRecord = 
+com.example.kidsvolumelock
+02-07 02:01:08.976  2580  3252 I WindowManager: 
+Changing focus from null to Window{e577e99 u0 com.exa
+mple.kidsvolumelock/com.example.kidsvolumelock.MainAc
+tivity} mode 0 displayId=0
+02-07 02:01:08.978  2580  3252 V 
+HwPhoneWindowManager: updateSystemUiColorLw 
+window=Window{e577e99 u0 com.example.kidsvolumelock/c
+om.example.kidsvolumelock.MainActivity},MagicStyle=0,
+StatusBarColor=0xff3700b3,NavigationBarColor=0xfffcfc
+fc, mForceNotchStatusBar=false
+02-07 02:01:08.982  2580  8753 I 
+HWMW_HwMagicActivityLifeManager: ### Execute -> 
+resumeActivityForHwMagicWin ActivityRecord 
+resumeActivity = ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)} isInFoldedStatus:false
+02-07 02:01:08.983  2580  8753 E 
+HWMW_HwMagicWinAmsPolicy: getTopTaskUnlockMode task 
+Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock} is not magic 
+window
+02-07 02:01:08.983  2580  8753 I 
+HWMW_HwMagicActivityLifeManager: 
+resumeActivityForHwMagicWin return, resumeActivity: 
+ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}
+02-07 02:01:09.001  2580  3251 I 
+HwBrightnessPgSceneDetection: 
+pkgNamecom.example.kidsvolumelock
+02-07 02:01:09.003  2580  2620 E 
+HWMW_HwMagicWinAmsPolicy: getTopTaskUnlockMode task 
+Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock} is not magic 
+window
+02-07 02:01:09.004  2580  2620 E 
+HWMW_HwMagicWinAmsPolicy: getTopTaskUnlockMode task 
+Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock} is not magic 
+window
+02-07 02:01:09.013  2580  3251 I DE J DES: [effect] 
+Pg pkg:com.example.kidsvolumelock
+02-07 02:01:09.034  2580  8697 V 
+ActivityTaskManager: Activity idle: 
+ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}
+02-07 02:01:09.036  3141  3233 D ShellTaskOrganizer: 
+apply finall BarInfo:HnMultiWindowBarInfo{color=0 
+shouldShow=true displayId=0 statusBarHeight=56 
+colorChange=false hidePopWindow=true 
+packageName=com.example.kidsvolumelock 
+isSupportLockfalse topTaskUnlockModefalse 
+isDirectScreenPhone= false isInMouseMode= false }
+02-07 02:01:09.041  2580  2609 I 
+HWMW_HwMagicWinManager: getHwMagicWinEnabled = false 
+pkg : com.example.kidsvolumelock
+02-07 02:01:09.043  2580  2609 I 
+hnWindowInfomationUpdate: toSaveActivityMode start ..
+.title=com.example.kidsvolumelock/com.example.kidsvol
+umelock.MainActivity,returnNum=1isVisible=true
+02-07 02:01:09.066  2580  8697 W 
+PackageConfigPersister: App-specific configuration 
+not found for packageName: 
+com.example.kidsvolumelock and userId: 0
+02-07 02:01:15.035  2580  8753 W 
+NotificationService: Toast already killed. 
+pkg=com.example.kidsvolumelock 
+token=android.os.BinderProxy@a0cd4f0
+02-07 02:01:17.873  2580  3957 I WindowManager: 
+Changing focus from Window{e577e99 u0 com.example.kid
+svolumelock/com.example.kidsvolumelock.MainActivity} 
+to Window{4b368ca u0 NotificationShade} mode 0 
+displayId=0
+02-07 02:01:17.874  2580  3957 E 
+HWMW_HwMagicWinAmsPolicy: getTopTaskUnlockMode task 
+Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock} is not magic 
+window
+02-07 02:01:17.884  3141  3233 D ShellTaskOrganizer: 
+apply finall BarInfo:HnMultiWindowBarInfo{color=0 
+shouldShow=false displayId=0 statusBarHeight=56 
+colorChange=false hidePopWindow=true 
+packageName=com.example.kidsvolumelock 
+isSupportLockfalse topTaskUnlockModefalse 
+isDirectScreenPhone= false isInMouseMode= false }
+02-07 02:01:17.888  2580  2620 E 
+HWMW_HwMagicWinAmsPolicy: getTopTaskUnlockMode task 
+Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock} is not magic 
+window
+02-07 02:01:17.899  3141  3233 D ShellTaskOrganizer: 
+apply finall BarInfo:HnMultiWindowBarInfo{color=0 
+shouldShow=true displayId=0 statusBarHeight=56 
+colorChange=false hidePopWindow=true 
+packageName=com.example.kidsvolumelock 
+isSupportLockfalse topTaskUnlockModefalse 
+isDirectScreenPhone= false isInMouseMode= false }
+02-07 02:01:18.373  2580  5182 W 
+NotificationService: Toast already killed. 
+pkg=com.example.kidsvolumelock 
+token=android.os.BinderProxy@8658b50
+02-07 02:01:19.198  2580  2606 I 
+HWMW_HwMagicActivityStarter: ### Execute 
+overrideIntentFlagForHwMagicWin focus 
+ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}, next: 
+ActivityRecord{a5b4905 u0 com.hihonor.android.launche
+r/.unihome.UniHomeLauncher, options: 
+ActivityOptions(178222184), mPackageName=null, 
+mAnimationType=-1, mStartX=0, mStartY=0, mWidth=0, 
+mHeight=0, mLaunchDisplayId=0
+02-07 02:01:19.202  2580  2606 W 
+HwActivityTaskManagerServiceEx: 
+setResumedActivityUncheckLocked start call, from: 
+ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}, to: 
+ActivityRecord{97285c9 u0 com.hihonor.android.launche
+r/.unihome.UniHomeLauncher t462 mVisible=false 
+mOccludesParent=true mode=fullscreen boundsRect(0, 0 
+- 1920, 1200)}
+02-07 02:01:19.202  2580  2606 I 
+HwActivityTaskManagerServiceEx: active 
+updateProcessInfo to computeOomAdj app 
+com.example.kidsvolumelock
+02-07 02:01:19.202  2580  2606 W 
+HwActivityTaskManagerServiceEx: appSwitch from: 
+com.example.kidsvolumelock to: 
+com.hihonor.android.launcher
+02-07 02:01:19.202  2580  2606 V 
+HwActivityTaskManagerServiceEx: takeTaskSnapShot 
+package com.example.kidsvolumelock
+02-07 02:01:19.214  2580  2606 I WindowManager: EHDR 
+real capture,task: Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock} ,snapshot: 
+TaskSnapshot{ mId=1770426079203 
+mCaptureTime=1640465369629953 mTopActivityComponent=c
+om.example.kidsvolumelock/.MainActivity 
+mSnapshot=android.hardware.HardwareBuffer@5196526 
+(1920x1200) mColorSpace=sRGB IEC61966-2.1 (id=0, 
+model=RGB) mOrientation=2 mRotation=1 
+mTaskSize=Point(1920, 1200) 
+mContentInsets=[0,56][0,62] 
+mLetterboxInsets=[0,0][0,0] mIsLowResolution=false 
+mIsRealSnapshot=true mWindowingMode=1 mAppearance=0 
+mIsTranslucent=false mHasImeSurface=false 
+mIsForceRotate=false
+02-07 02:01:19.219  2580  2608 I UsageStatsService: 
+reportEvent : component= ComponentInfo{com.example.ki
+dsvolumelock/com.example.kidsvolumelock.MainActivity}
+ eventType= 2
+02-07 02:01:19.312  2580  2609 I WMTransition: Start 
+calculating TransitionInfo based on participants: 
+{Task{4e72ae8 #462 type=undefined 
+A=10102:com.hihonor.android.launcher}, Task{814b585 
+#461 type=home}, ActivityRecord{97285c9 u0 com.hihono
+r.android.launcher/.unihome.UniHomeLauncher t462 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}, 
+ActivityRecord{a5b4905 u0 com.hihonor.android.launche
+r/.unihome.UniHomeLauncher t-1 mVisible=false 
+mOccludesParent=true mode=undefined boundsRect(0, 0 
+- 0, 0)}, ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}, 
+WallpaperWindowToken{c8273ea 
+token=android.os.Binder@c712fd5}}
+02-07 02:01:19.313  2580  2609 I WMTransition: 
+Initial targets: {637=WallpaperWindowToken{c8273ea 
+token=android.os.Binder@c712fd5}, 651=Task{814b585 
+#461 type=home}, 739=ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}, 742=Task{4e72ae8 
+#462 type=undefined 
+A=10102:com.hihonor.android.launcher}, 
+833=ActivityRecord{97285c9 u0 com.hihonor.android.lau
+ncher/.unihome.UniHomeLauncher t462 mVisible=true 
+mOccludesParent=true mode=fullscreen boundsRect(0, 0 
+- 1920, 1200)}}
+02-07 02:01:19.313  2580  2609 I WMTransition: Final 
+targets: [Task{814b585 #461 type=home}, Task{c2b5f69 
+#634 type=standard 
+A=10252:com.example.kidsvolumelock}, 
+WallpaperWindowToken{c8273ea 
+token=android.os.Binder@c712fd5}]
+02-07 02:01:19.320  2580  2609 I 
+HwWindowManagerServiceEx: 
+constructHnTransitionAnimationInfo type: close 
+activity : ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=true mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}
+02-07 02:01:19.337  2580  2609 I WindowManager: EHDR 
+real capture,task: Task{c2b5f69 #634 type=standard 
+A=10252:com.example.kidsvolumelock} ,snapshot: 
+TaskSnapshot{ mId=1770426079326 
+mCaptureTime=1640465493481307 mTopActivityComponent=c
+om.example.kidsvolumelock/.MainActivity 
+mSnapshot=android.hardware.HardwareBuffer@8984834 
+(1920x1200) mColorSpace=sRGB IEC61966-2.1 (id=0, 
+model=RGB) mOrientation=2 mRotation=1 
+mTaskSize=Point(1920, 1200) 
+mContentInsets=[0,56][0,62] 
+mLetterboxInsets=[0,0][0,0] mIsLowResolution=false 
+mIsRealSnapshot=true mWindowingMode=1 mAppearance=0 
+mIsTranslucent=false mHasImeSurface=false 
+mIsForceRotate=false
+02-07 02:01:19.359  2580 12371 I 
+ActivityTaskManager: animating need stay in stopping 
+state: com.example.kidsvolumelock/.MainActivity
+02-07 02:01:19.360  2580  2608 I 
+ActivityTaskManager: animating need stay in stopping 
+state: com.example.kidsvolumelock/.MainActivity
+02-07 02:01:19.374  2580  2605 V WindowManager:     
+info={id=1891 t=OPEN f=0x0 trk=0 
+includeEmbeddedWindow=false isKeyGuardLocked=false 
+r=[0@Point(0, 0)#false] c=[{WCT{RemoteToken{35f4437 
+Task{814b585 #461 type=home}}} m=TO_FRONT 
+f=SHOW_WALLPAPER|MOVE_TO_TOP 
+leash=Surface(name=Task=461)/@0xd84990c sb=Rect(0, 0 
+- 1920, 1200) eb=Rect(0, 0 - 1920, 1200) d=0 
+mSkipAnimation=false taskId = 
+0},{WCT{RemoteToken{bafacc6 Task{c2b5f69 #634 
+type=standard A=10252:com.example.kidsvolumelock}}} 
+m=TO_BACK f=NONE 
+leash=Surface(name=Task=634)/@0x7951487 sb=Rect(0, 0 
+- 1920, 1200) eb=Rect(0, 0 - 1920, 1200) d=0 
+mSkipAnimation=false taskId = 0},{null m=TO_FRONT 
+f=IS_WALLPAPER 
+leash=Surface(name=WallpaperWindowToken{c8273ea 
+token=android.os.Binder@c712fd5})/@0x7f7fb1 
+sb=Rect(0, 0 - 1920, 1200) eb=Rect(0, 0 - 1920, 
+1200) d=0 mSkipAnimation=false taskId = 0}]}
+02-07 02:01:19.377  2580  2608 I 
+ActivityTaskManager: animating need stay in stopping 
+state: com.example.kidsvolumelock/.MainActivity
+02-07 02:01:19.831  2580  3232 V WindowManager: 
+Loading animations: layout params 
+pkg=com.example.kidsvolumelock resId=0x10302ff
+02-07 02:01:19.843  2580  2609 I 
+ActivityTaskManager: remove inputSink surface 
+ActivityRecord{c01996d u0 
+com.example.kidsvolumelock/.MainActivity t634 
+mVisible=false mOccludesParent=true mode=fullscreen 
+boundsRect(0, 0 - 1920, 1200)}
+02-07 02:01:19.874  2580 11304 I 
+hnWindowInfomationUpdate: toSaveActivityMode start ..
+.title=com.example.kidsvolumelock/com.example.kidsvol
+umelock.MainActivity,returnNum=1isVisible=false
+02-07 02:01:19.896  2580  2608 I UsageStatsService: 
+reportEvent : component= ComponentInfo{com.example.ki
+dsvolumelock/com.example.kidsvolumelock.MainActivity}
+ eventType= 23
+02-07 02:01:43.574  3553 12300 I AppFastHibernation: 
+    AppInfo {Uid:10252 
+Pkg:com.example.kidsvolumelock Pids:[11046]}
+02-07 02:01:43.575  3553  4196 I AppFastHibernation: 
+    AppInfo {Uid:10252 
+Pkg:com.example.kidsvolumelock Pids:[11046]}
+02-07 02:01:43.581  3553  4196 I AppFastHibernation: 
+fast F_Z process uid: 10252 pkg: 
+com.example.kidsvolumelock pids: [11046]
+02-07 02:01:44.584  3553  4196 I AppFastHibernation: 
+fast unF_Z process uid: 10252 pkg: 
+com.example.kidsvolumelock
+02-07 02:02:17.276  3553  4204 I InactiveClean: 
+cleanInactiveApp: frequentUsedApps: 
+[com.google.android.apps.youtube.kids, 
+com.example.kidsvolumelock, 
+com.hihonor.coauthservice]
+
+
