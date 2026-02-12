@@ -33,16 +33,45 @@ class MainActivity : AppCompatActivity() {
         
         // Auto-restart service if it was enabled before app was closed
         if (prefs.isServiceEnabled()) {
-            val serviceIntent = Intent(this, VolumeLockService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(serviceIntent)
-            } else {
-                startService(serviceIntent)
-            }
-            LogManager.info("Auto-restarted VolumeLockService on app launch")
+            startVolumeService()
+            scheduleServiceCheckWorker()
         }
         
         refreshServiceStatus()
+    }
+
+    private fun startVolumeService() {
+        val serviceIntent = Intent(this, VolumeLockService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
+        LogManager.info("MainActivity: Starting VolumeLockService")
+    }
+
+    private fun scheduleServiceCheckWorker() {
+        try {
+            val constraints = androidx.work.Constraints.Builder()
+                .setRequiresBatteryNotLow(false) // Run even if low battery
+                .build()
+
+            val workRequest = androidx.work.PeriodicWorkRequest.Builder(
+                ServiceCheckWorker::class.java,
+                15, java.util.concurrent.TimeUnit.MINUTES
+            )
+            .setConstraints(constraints)
+            .build()
+
+            androidx.work.WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "VolumeLockWatchdog",
+                androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
+                workRequest
+            )
+            LogManager.info("MainActivity: Scheduled ServiceCheckWorker (Watchdog)")
+        } catch (e: Exception) {
+            LogManager.error("MainActivity: Failed to schedule worker", e)
+        }
     }
 
     private fun setupUI() {
@@ -101,17 +130,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun toggleService(enable: Boolean) {
         prefs.setServiceEnabled(enable)
-        val intent = Intent(this, VolumeLockService::class.java)
         if (enable) {
             LogManager.info("User starting volume lock service")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent)
-            } else {
-                startService(intent)
-            }
+            startVolumeService()
+            scheduleServiceCheckWorker()
         } else {
             LogManager.info("User stopping volume lock service")
+            val intent = Intent(this, VolumeLockService::class.java)
             stopService(intent)
+            // Cancel watchdog when user manually stops service
+            androidx.work.WorkManager.getInstance(this).cancelUniqueWork("VolumeLockWatchdog")
         }
         refreshServiceStatus()
     }

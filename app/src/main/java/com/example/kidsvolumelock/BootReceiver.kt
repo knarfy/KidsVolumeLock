@@ -23,6 +23,29 @@ class BootReceiver : BroadcastReceiver() {
                         context.startService(serviceIntent)
                         LogManager.info("BootReceiver: Starting VolumeLockService")
                     }
+                    
+                    // Schedule Watchdog
+                    try {
+                        val constraints = androidx.work.Constraints.Builder()
+                            .setRequiresBatteryNotLow(false)
+                            .build()
+
+                        val workRequest = androidx.work.PeriodicWorkRequest.Builder(
+                            ServiceCheckWorker::class.java,
+                            15, java.util.concurrent.TimeUnit.MINUTES
+                        )
+                        .setConstraints(constraints)
+                        .build()
+
+                        androidx.work.WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                            "VolumeLockWatchdog",
+                            androidx.work.ExistingPeriodicWorkPolicy.UPDATE,
+                            workRequest
+                        )
+                        LogManager.info("BootReceiver: Scheduled ServiceCheckWorker")
+                    } catch (e: Exception) {
+                        LogManager.error("BootReceiver: Failed to schedule worker", e)
+                    }
                 } else {
                     LogManager.info("BootReceiver: Service not enabled, skipping auto-start")
                 }
