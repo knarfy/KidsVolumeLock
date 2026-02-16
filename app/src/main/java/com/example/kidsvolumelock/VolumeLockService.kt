@@ -104,9 +104,21 @@ class VolumeLockService : Service() {
             audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
             powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
             
-            startForeground(NOTIFICATION_ID, createNotification())
-            Log.d(TAG, "Service created")
-            LogManager.info("✅ VolumeLockService onCreate - Service created successfully")
+            try {
+                startForeground(NOTIFICATION_ID, createNotification())
+                Log.d(TAG, "Service created")
+                LogManager.info("✅ VolumeLockService onCreate - Service created successfully")
+            } catch (e: Exception) {
+                // Handle Android 12+ ForegroundServiceStartNotAllowedException
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is android.app.ForegroundServiceStartNotAllowedException) {
+                     LogManager.error("❌ VolumeLockService: Foreground service start not allowed", e)
+                     // If we can't start foreground, we must stop to avoid ANR/Crash
+                     stopSelf()
+                     return
+                } else {
+                    throw e
+                }
+            }
             logServiceState("onCreate")
         } catch (e: Exception) {
             LogManager.error("❌ VolumeLockService onCreate failed", e)

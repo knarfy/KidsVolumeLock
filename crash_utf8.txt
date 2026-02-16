@@ -1,0 +1,286 @@
+﻿
+> 02-14 13:33:25.886 15460 15460 E AndroidRuntime: 
+FATAL EXCEPTION: main
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 
+Process: com.example.kidsvolumelock, PID: 15460
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 
+java.lang.RuntimeException: Unable to create service 
+com.example.kidsvolumelock.VolumeLockService: android
+.app.ForegroundServiceStartNotAllowedException: 
+Service.startForeground() not allowed due to 
+mAllowStartForeground false: service 
+com.example.kidsvolumelock/.VolumeLockService
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.app.ActivityThread.handleCreateService(Act
+ivityThread.java:5572)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.app.ActivityThread.-$$Nest$mhandleCreateSe
+rvice(Unknown Source:0)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.app.ActivityThread$H.handleMessage(Activit
+yThread.java:2897)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:117)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:210)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:302)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.jav
+a:9675)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgsC
+aller.run(RuntimeInit.java:601)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteInit
+.java:1062)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 
+Caused by: android.app.ForegroundServiceStartNotAllow
+edException: Service.startForeground() not allowed 
+due to mAllowStartForeground false: service 
+com.example.kidsvolumelock/.VolumeLockService
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.app.ForegroundServiceStartNotAllowedExcept
+ion$1.createFromParcel(ForegroundServiceStartNotAllow
+edException.java:54)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.app.ForegroundServiceStartNotAllowedExcept
+ion$1.createFromParcel(ForegroundServiceStartNotAllow
+edException.java:50)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.os.Parcel.readParcelableInternal(Parcel.ja
+va:4911)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.os.Parcel.readParcelable(Parcel.java:4893)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.os.Parcel.createExceptionOrNull(Parcel.jav
+a:3093)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at 
+android.os.Parcel.createException(Parcel.java:3082)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.os.Parcel.readException(Parcel.java:3065)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.os.Parcel.readException(Parcel.java:3007)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.app.IActivityManager$Stub$Proxy.setService
+Foreground(IActivityManager.java:6833)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at 
+android.app.Service.startForeground(Service.java:781)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at com.example.kidsvolumelock.VolumeLockService.onCre
+ate(VolumeLockService.kt:107)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+at android.app.ActivityThread.handleCreateService(Act
+ivityThread.java:5557)
+  02-14 13:33:25.886 15460 15460 E AndroidRuntime: 	
+... 9 more
+> 02-14 13:33:42.884 16090 16090 E AndroidRuntime: 
+FATAL EXCEPTION: main
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 
+Process: com.example.kidsvolumelock, PID: 16090
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 
+java.lang.RuntimeException: Unable to create service 
+com.example.kidsvolumelock.VolumeLockService: android
+.app.ForegroundServiceStartNotAllowedException: 
+Service.startForeground() not allowed due to 
+mAllowStartForeground false: service 
+com.example.kidsvolumelock/.VolumeLockService
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.app.ActivityThread.handleCreateService(Act
+ivityThread.java:5572)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.app.ActivityThread.-$$Nest$mhandleCreateSe
+rvice(Unknown Source:0)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.app.ActivityThread$H.handleMessage(Activit
+yThread.java:2897)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at 
+android.os.Handler.dispatchMessage(Handler.java:117)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.os.Looper.loopOnce(Looper.java:210)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.os.Looper.loop(Looper.java:302)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.app.ActivityThread.main(ActivityThread.jav
+a:9675)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at java.lang.reflect.Method.invoke(Native Method)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at com.android.internal.os.RuntimeInit$MethodAndArgsC
+aller.run(RuntimeInit.java:601)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at com.android.internal.os.ZygoteInit.main(ZygoteInit
+.java:1062)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 
+Caused by: android.app.ForegroundServiceStartNotAllow
+edException: Service.startForeground() not allowed 
+due to mAllowStartForeground false: service 
+com.example.kidsvolumelock/.VolumeLockService
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.app.ForegroundServiceStartNotAllowedExcept
+ion$1.createFromParcel(ForegroundServiceStartNotAllow
+edException.java:54)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.app.ForegroundServiceStartNotAllowedExcept
+ion$1.createFromParcel(ForegroundServiceStartNotAllow
+edException.java:50)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.os.Parcel.readParcelableInternal(Parcel.ja
+va:4911)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.os.Parcel.readParcelable(Parcel.java:4893)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.os.Parcel.createExceptionOrNull(Parcel.jav
+a:3093)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at 
+android.os.Parcel.createException(Parcel.java:3082)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.os.Parcel.readException(Parcel.java:3065)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.os.Parcel.readException(Parcel.java:3007)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.app.IActivityManager$Stub$Proxy.setService
+Foreground(IActivityManager.java:6833)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at 
+android.app.Service.startForeground(Service.java:781)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at com.example.kidsvolumelock.VolumeLockService.onCre
+ate(VolumeLockService.kt:107)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+at android.app.ActivityThread.handleCreateService(Act
+ivityThread.java:5557)
+  02-14 13:33:42.884 16090 16090 E AndroidRuntime: 	
+... 9 more
+  --------- beginning of system
+  02-16 04:04:22.037  3141  3233 V 
+WindowManagerShell:  Checking filter Pair{{types=[] 
+flags=0x0] notFlags=0x100 checks=[{atype=home 
+independent=true modes=[OPEN,TO_FRONT] flags=NONE 
+mustBeTask=false order=ANY topActivity=ComponentInfo{
+com.hihonor.android.launcher/com.hihonor.android.laun
+cher.unihome.UniHomeLauncher}},{atype=standard 
+independent=true modes=[CLOSE,TO_BACK] flags=NONE 
+mustBeTask=false order=ANY topActivity=null},{NOT 
+atype=standard independent=true modes=[] 
+flags=TRANSLUCENT mustBeTask=false order=ANY 
+topActivity=null}]} RemoteTransition { 
+remoteTransition = 
+android.window.IRemoteTransition$Stub$Proxy@1517070, 
+backRemoteTransition = , appThread = 
+android.app.IApplicationThread$Stub$Proxy@68f2fe9, 
+debugName = QuickstepLaunchHome }}
+  02-16 04:04:22.037  3141  3233 V 
+WindowManagerShell:  Checking filter Pair{{types=[] 
+flags=0x0] notFlags=0x100 checks=[{atype=home 
+independent=true modes=[OPEN,TO_FRONT] flags=NONE 
+mustBeTask=false order=ANY topActivity=ComponentInfo{
+com.hihonor.android.launcher/com.hihonor.android.laun
+cher.unihome.UniHomeLauncher}},{atype=standard 
+independent=true modes=[CLOSE,TO_BACK] flags=NONE 
+mustBeTask=false order=ANY topActivity=null},{NOT 
+atype=standard independent=true modes=[] 
+flags=TRANSLUCENT mustBeTask=false order=ANY 
+topActivity=null}]} RemoteTransition { 
+remoteTransition = 
+android.window.IRemoteTransition$Stub$Proxy@ba47a8e, 
+backRemoteTransition = , appThread = 
+android.app.IApplicationThread$Stub$Proxy@a33a2af, 
+debugName = QuickstepLaunchHome }}
+  02-16 04:04:22.037  3141  3233 V 
+WindowManagerShell:  Delegate animation for #2631 to 
+null
+  02-16 04:04:22.038  3141  3233 E 
+RemoteTransitionHandler: pending remote null
+  02-16 04:04:22.038  3141  3233 V 
+WindowManagerShell:  try handler com.android.wm.shell
+.transition.DefaultTransitionHandler@1533245
+  02-16 04:04:22.038  3141  3233 I 
+WindowManagerShell: start default transition 
+animation, info = {id=2631 t=OPEN f=0x0 trk=0 
+includeEmbeddedWindow=false isKeyGuardLocked=false 
+r=[0@Point(0, 0)#true] c=[{null m=OPEN 
+f=TRANSLUCENT|FILLS_TASK 
+leash=Surface(name=ActivityRecord{7399d64 u0 
+com.android.settings/.Settings$WifiSettingsActivity 
+t665 mVisible=false mOccludesParent=false 
+mode=fullscreen boundsRect(0, 0 - 1920, 
+1200)})/@0xadb80d3 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 
+- 1920, 1200) d=-1->0 r=-1->1:-1 
+mSkipAnimation=false taskId = 665}]}
+  02-16 04:04:22.038  3141  3233 I 
+DefaultTransitionHandler: start default transition, 
+wallpaperTransit: 0
+  02-16 04:04:22.038  3141  3233 I 
+DefaultTransitionHandler: loadAnimation: type=OPEN 
+flags=0 changeMode=1 
+changeFlags=TRANSLUCENT|FILLS_TASK 
+isOpeningType=true enter=true isTask=false 
+overrideType=1 endBounds=Rect(0, 0 - 1920, 1200) 
+options = { AnimationOptions type= ANIM_CUSTOM 
+package=com.android.settings override=true b=Rect(0, 
+0 - 0, 0)}
+  02-16 04:04:22.038  3141  3233 I 
+DefaultTransitionHandler: load custom animation=0x0, 
+pkg=com.android.settings
+  02-16 04:04:22.038  3141  3233 E 
+DefaultTransitionHandler: animation res null, {null 
+m=OPEN f=TRANSLUCENT|FILLS_TASK 
+leash=Surface(name=ActivityRecord{7399d64 u0 
+com.android.settings/.Settings$WifiSettingsActivity 
+t665 mVisible=false mOccludesParent=false 
+mode=fullscreen boundsRect(0, 0 - 1920, 
+1200)})/@0xadb80d3 sb=Rect(0, 0 - 0, 0) eb=Rect(0, 0 
+- 1920, 1200) d=-1->0 r=-1->1:-1 
+mSkipAnimation=false taskId = 665}
+  02-16 04:04:22.041  3141  3233 I ShellTransitions: 
+Active animation 
+finished=(#2631)android.os.BinderProxy@1383136@0, 
+merged=null, aborted=false
+  02-16 04:04:22.041  2580  2609 I WindowManager: 
+applyPostLayoutPolicyLw# 2 win: Window{5db8 u0 
+com.android.settings/com.android.settings.HWSettings}
+  02-16 04:04:22.041  3141  3233 V 
+WindowManagerShell: Transition animation finished 
+(aborted=false), notifying core 
+(#2631)android.os.BinderProxy@1383136@0
+  02-16 04:04:22.047  2580 11533 I 
+TransitionController: finishTransition 
+TransitionRecord{473cc82 id=2631 type=OPEN flags=0x0}
+  02-16 04:04:22.047  2580  2608 I 
+HwBrightnessPgSceneDetection: isHealthEyeWhenFlod() 
+sIsContainsFoldPkgfalse
+  02-16 04:04:22.050  3141  3233 I 
+WindowManagerShell: Track 0 became idle
+  02-16 04:04:22.050  3141  3233 I 
+WindowManagerShell: All active transition animations 
+finished
+  02-16 04:04:22.050  3141  3233 I 
+WindowManagerShell:  animated by com.android.wm.shell
+.transition.DefaultTransitionHandler@1533245
+  02-16 04:04:22.050  3141  3233 I 
+WindowManagerShell: Track 0 became idle
+  02-16 04:04:22.050  3141  3233 I 
+WindowManagerShell: All active transition animations 
+finished
+  02-16 04:04:22.052  2580  2608 I 
+HwBrightnessPgSceneDetection: isHealthEyeWhenFlod() 
+sIsContainsFoldPkgfalse
+  02-16 04:04:22.052  2580  2608 I 
+HwBrightnessPgSceneDetection: isHealthEyeWhenFlod() 
+sIsContainsFoldPkgfalse
+  02-16 04:04:22.052  2580  2827 I PackageManager: 
+setEnabledSetting 
+pkg:com.google.android.apps.wellbeing, className:com.
+google.android.apps.wellbeing.focusmode.quicksettings
+.FocusModeTileService, newState:1, flags:1, 
+userId:0, CallingPid:24142, CallingUid:10129
+
+

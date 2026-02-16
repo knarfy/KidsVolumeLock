@@ -120,6 +120,14 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 101)
             }
         }
+
+        // Check for Overlay Permission (Android 6.0+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            LogManager.warning("Overlay permission missing. Requesting...")
+            Toast.makeText(this, "Por favor, otorga el permiso 'Mostrar sobre otras apps' para que el bloqueo funcione en segundo plano.", Toast.LENGTH_LONG).show()
+            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, android.net.Uri.parse("package:$packageName"))
+            startActivityForResult(intent, 201)
+        }
     }
 
     private fun saveVolume(percent: Int) {

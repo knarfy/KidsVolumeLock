@@ -26,6 +26,11 @@ class ServiceCheckWorker(context: Context, params: WorkerParameters) : Worker(co
                 try {
                     // ContextCompat maneja la compatibilidad de versiones, pero no la excepción específica de S
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        // Check for Overlay permission on Android 10+ (Q) where background starts are restricted
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !android.provider.Settings.canDrawOverlays(applicationContext)) {
+                            LogManager.warning("ServiceCheckWorker: ⚠️ Falta permiso de superposición (Overlay). No se puede iniciar servicio en segundo plano.")
+                            return Result.failure()
+                        }
                          applicationContext.startForegroundService(serviceIntent)
                     } else {
                          applicationContext.startService(serviceIntent)
