@@ -16,6 +16,10 @@ import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 
+import android.database.ContentObserver
+import android.os.Handler
+import android.provider.Settings
+
 class VolumeLockService : Service() {
 
     private lateinit var preferencesManager: PreferencesManager
@@ -26,6 +30,8 @@ class VolumeLockService : Service() {
     private var isMonitoring = false
     private var isVolumeReceiverRegistered = false
     private var isScreenReceiverRegistered = false
+    
+    private var volumeObserver: VolumeObserver? = null
 
     private var lastVolumeChangeTimestamp = 0L
     private var cachedMaxVolumePercent = 50 // Default safe value
@@ -57,19 +63,20 @@ class VolumeLockService : Service() {
                 // Only act if it's STREAM_MUSIC or if the extra is missing (safety)
                 if (streamType == AudioManager.STREAM_MUSIC || streamType == -1) {
                     val timestamp = System.currentTimeMillis()
-                    val timeSinceLastChange = if (lastVolumeChangeTimestamp > 0) {
-                        timestamp - lastVolumeChangeTimestamp
-                    } else {
-                        0L
-                    }
                     lastVolumeChangeTimestamp = timestamp
                     
-                    // LogManager.info("📢 Volume change detected (stream=$streamType, ${timeSinceLastChange}ms since last)")
+                    // LogManager.info("📢 Volume change detected (stream=$streamType)")
                     checkAndEnforceVolumeLimit()
-                } else {
-                     // LogManager.info("🔇 Ignored volume change for stream $streamType")
                 }
             }
+        }
+    }
+    
+    private inner class VolumeObserver(handler: Handler) : ContentObserver(handler) {
+        override fun onChange(selfChange: Boolean) {
+            super.onChange(selfChange)
+            // LogManager.info("👀 ContentObserver: Volume setting changed")
+            checkAndEnforceVolumeLimit()
         }
     }
 
@@ -89,6 +96,7 @@ class VolumeLockService : Service() {
                     logServiceState("after USER_PRESENT")
                     // Re-register volume receiver as a safety measure
                     ensureVolumeReceiverRegistered()
+                    ensureVolumeObserverRegistered()
                 }
             }
         }
@@ -138,6 +146,9 @@ class VolumeLockService : Service() {
                 // Register BroadcastReceiver for volume changes
                 registerVolumeReceiver()
                 
+                // Register ContentObserver for volume changes (Redundancy)
+                registerVolumeObserver()
+                
                 // Register BroadcastReceiver for screen events
                 registerScreenReceiver()
                 
@@ -147,8 +158,8 @@ class VolumeLockService : Service() {
                 // Load initial value
                 cachedMaxVolumePercent = preferencesManager.getMaxVolumePercent()
                 
-                Log.d(TAG, "Volume monitoring started using BroadcastReceiver")
-                LogManager.info("✅ VolumeLockService started - Using BroadcastReceiver with limit $cachedMaxVolumePercent%")
+                Log.d(TAG, "Volume monitoring started using BroadcastReceiver & ContentObserver")
+                LogManager.info("✅ VolumeLockService started - Using BroadcastReceiver & ContentObserver with limit $cachedMaxVolumePercent%")
                 logServiceState("onStartCommand")
                 
                 // Do initial check
@@ -159,6 +170,7 @@ class VolumeLockService : Service() {
         } else {
             LogManager.info("⚠️ onStartCommand called but already monitoring - ensuring receivers are registered")
             ensureVolumeReceiverRegistered()
+            ensureVolumeObserverRegistered()
             ensureScreenReceiverRegistered()
         }
         return START_STICKY
@@ -171,6 +183,7 @@ class VolumeLockService : Service() {
             
             if (isMonitoring) {
                 unregisterVolumeReceiver()
+                unregisterVolumeObserver()
                 unregisterScreenReceiver()
                 sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
                 isMonitoring = false
@@ -276,6 +289,41 @@ class VolumeLockService : Service() {
         }
     }
 
+    private fun registerVolumeObserver() {
+        try {
+            if (volumeObserver == null) {
+                volumeObserver = VolumeObserver(Handler(mainLooper))
+                contentResolver.registerContentObserver(
+                    Settings.System.CONTENT_URI,
+                    true,
+                    volumeObserver!!
+                )
+                LogManager.info("✅ Volume ContentObserver registered")
+            }
+        } catch (e: Exception) {
+            LogManager.error("❌ Failed to register volume observer", e)
+        }
+    }
+
+    private fun unregisterVolumeObserver() {
+        try {
+            volumeObserver?.let {
+                contentResolver.unregisterContentObserver(it)
+                volumeObserver = null
+                LogManager.info("❌ Volume ContentObserver unregistered")
+            }
+        } catch (e: Exception) {
+            LogManager.error("❌ Failed to unregister volume observer", e)
+        }
+    }
+
+    private fun ensureVolumeObserverRegistered() {
+        if (volumeObserver == null) {
+            LogManager.warning("⚠️ Volume observer was not registered! Re-registering...")
+            registerVolumeObserver()
+        }
+    }
+
     private fun logServiceState(context: String) {
         val isScreenOn = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
             powerManager.isInteractive
@@ -291,6 +339,7 @@ class VolumeLockService : Service() {
             📊 Service State ($context):
             - isMonitoring: $isMonitoring
             - volumeReceiverRegistered: $isVolumeReceiverRegistered
+            - volumeObserverRegistered: ${volumeObserver != null}
             - screenReceiverRegistered: $isScreenReceiverRegistered
             - screenOn: $isScreenOn
             - currentVolume: $currentVolume/$maxVolume
