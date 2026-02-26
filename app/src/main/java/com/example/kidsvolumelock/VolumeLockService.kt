@@ -93,13 +93,14 @@ class VolumeLockService : Service() {
                     logServiceState("after SCREEN_ON")
                 }
                 Intent.ACTION_USER_PRESENT -> {
-                LogManager.warning("👤 USER_PRESENT detected - User unlocked device")
-                logServiceState("after USER_PRESENT")
-                // Re-register volume receiver as a safety measure
-                ensureVolumeReceiverRegistered()
-                ensureVolumeObserverRegistered()
-                // Force a volume check on unlock
-                checkAndEnforceVolumeLimit()
+                    LogManager.warning("👤 USER_PRESENT detected - User unlocked device")
+                    logServiceState("after USER_PRESENT")
+                    // Re-register volume receiver as a safety measure
+                    ensureVolumeReceiverRegistered()
+                    ensureVolumeObserverRegistered()
+                    // Force a volume check on unlock
+                    checkAndEnforceVolumeLimit()
+                }
             }
         }
     }
