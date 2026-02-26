@@ -16,16 +16,16 @@ class BootReceiver : BroadcastReceiver() {
                 val prefs = PreferencesManager(context)
                 if (prefs.isServiceEnabled()) {
                     val serviceIntent = Intent(context, VolumeLockService::class.java)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !android.provider.Settings.canDrawOverlays(context)) {
-                            LogManager.warning("BootReceiver: ⚠️ Falta permiso de superposición (Overlay). No se puede iniciar servicio en segundo plano.")
-                        } else {
+                    try {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             context.startForegroundService(serviceIntent)
                             LogManager.info("BootReceiver: Starting VolumeLockService (foreground)")
+                        } else {
+                            context.startService(serviceIntent)
+                            LogManager.info("BootReceiver: Starting VolumeLockService")
                         }
-                    } else {
-                        context.startService(serviceIntent)
-                        LogManager.info("BootReceiver: Starting VolumeLockService")
+                    } catch (e: Exception) {
+                        LogManager.error("BootReceiver: Failed to start service", e)
                     }
                     
                     // Schedule Watchdog

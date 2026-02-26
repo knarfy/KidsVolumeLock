@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             scheduleServiceCheckWorker()
         }
         
+        checkBatteryOptimization()
         refreshServiceStatus()
     }
 
@@ -127,6 +128,31 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Por favor, otorga el permiso 'Mostrar sobre otras apps' para que el bloqueo funcione en segundo plano.", Toast.LENGTH_LONG).show()
             val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, android.net.Uri.parse("package:$packageName"))
             startActivityForResult(intent, 201)
+        }
+    }
+
+    private fun checkBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
+            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                LogManager.warning("Battery optimization is active for this app. Requesting exemption.")
+                try {
+                    val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                        data = android.net.Uri.parse("package:$packageName")
+                    }
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    LogManager.error("Could not open battery optimization dialog, falling back to settings", e)
+                    try {
+                        val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                        startActivity(intent)
+                    } catch (e2: Exception) {
+                        LogManager.error("Could not open battery settings", e2)
+                    }
+                }
+            } else {
+                LogManager.info("Battery optimization is already disabled for this app.")
+            }
         }
     }
 

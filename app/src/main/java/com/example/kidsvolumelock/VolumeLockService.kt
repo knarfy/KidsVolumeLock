@@ -25,6 +25,7 @@ class VolumeLockService : Service() {
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var audioManager: AudioManager
     private lateinit var powerManager: PowerManager
+    private var wakeLock: PowerManager.WakeLock? = null
     private lateinit var sharedPreferences: SharedPreferences
     private var volumeCorrections = 0
     private var isMonitoring = false
@@ -92,13 +93,41 @@ class VolumeLockService : Service() {
                     logServiceState("after SCREEN_ON")
                 }
                 Intent.ACTION_USER_PRESENT -> {
-                    LogManager.warning("👤 USER_PRESENT detected - User unlocked device")
-                    logServiceState("after USER_PRESENT")
-                    // Re-register volume receiver as a safety measure
-                    ensureVolumeReceiverRegistered()
-                    ensureVolumeObserverRegistered()
-                }
+                LogManager.warning("👤 USER_PRESENT detected - User unlocked device")
+                logServiceState("after USER_PRESENT")
+                // Re-register volume receiver as a safety measure
+                ensureVolumeReceiverRegistered()
+                ensureVolumeObserverRegistered()
+                // Force a volume check on unlock
+                checkAndEnforceVolumeLimit()
             }
+        }
+    }
+
+    private fun acquireWakeLock() {
+        try {
+            if (wakeLock == null) {
+                wakeLock = powerManager.newWakeLock(
+                    PowerManager.PARTIAL_WAKE_LOCK,
+                    "KidsVolumeLock:ServiceWakeLock"
+                )
+                wakeLock?.acquire()
+                LogManager.info("🔋 WakeLock acquired - keeping CPU alive for monitoring")
+            }
+        } catch (e: Exception) {
+            LogManager.error("❌ Failed to acquire WakeLock", e)
+        }
+    }
+
+    private fun releaseWakeLock() {
+        try {
+            if (wakeLock?.isHeld == true) {
+                wakeLock?.release()
+                LogManager.info("🔋 WakeLock released")
+            }
+            wakeLock = null
+        } catch (e: Exception) {
+            LogManager.error("❌ Failed to release WakeLock", e)
         }
     }
 
@@ -164,6 +193,9 @@ class VolumeLockService : Service() {
                 
                 // Do initial check
                 checkAndEnforceVolumeLimit()
+                
+                // Acquire WakeLock to prevent CPU sleeping during monitoring
+                acquireWakeLock()
             } catch (e: Exception) {
                 LogManager.error("❌ VolumeLockService onStartCommand failed", e)
             }
@@ -186,6 +218,7 @@ class VolumeLockService : Service() {
                 unregisterVolumeObserver()
                 unregisterScreenReceiver()
                 sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
+                releaseWakeLock()
                 isMonitoring = false
             }
             
