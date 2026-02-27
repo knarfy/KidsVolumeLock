@@ -83,7 +83,9 @@ object LogManager {
             val timestamp = dateFormat.format(Date())
             val logEntry = "[$timestamp] [$level] $message\n"
             
-            FileWriter(logFile, true).use { writer ->
+            val fos = java.io.FileOutputStream(logFile, true)
+            val osw = java.io.OutputStreamWriter(fos, "UTF-8")
+            osw.use { writer ->
                 writer.append(logEntry)
             }
         } catch (e: Exception) {

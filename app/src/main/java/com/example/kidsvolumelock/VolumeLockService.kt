@@ -36,6 +36,14 @@ class VolumeLockService : Service() {
 
     private var lastVolumeChangeTimestamp = 0L
     private var cachedMaxVolumePercent = 50 // Default safe value
+    private val heartbeatHandler = Handler(android.os.Looper.getMainLooper())
+    private val heartbeatRunnable = object : Runnable {
+        override fun run() {
+            LogManager.info("💓 HEARTBEAT - VolumeLockService is alive")
+            logServiceState("heartbeat")
+            heartbeatHandler.postDelayed(this, 5 * 60 * 1000) // Every 5 minutes
+        }
+    }
 
     private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         if (key == PreferencesManager.KEY_MAX_VOLUME_PERCENT) {
@@ -91,6 +99,8 @@ class VolumeLockService : Service() {
                 Intent.ACTION_SCREEN_ON -> {
                     LogManager.warning("🔓 SCREEN_ON detected - Screen turned on")
                     logServiceState("after SCREEN_ON")
+                    // Check volume immediately when screen turns on
+                    checkAndEnforceVolumeLimit("SCREEN_ON")
                 }
                 Intent.ACTION_USER_PRESENT -> {
                     LogManager.warning("👤 USER_PRESENT detected - User unlocked device")
@@ -99,7 +109,7 @@ class VolumeLockService : Service() {
                     ensureVolumeReceiverRegistered()
                     ensureVolumeObserverRegistered()
                     // Force a volume check on unlock
-                    checkAndEnforceVolumeLimit()
+                    checkAndEnforceVolumeLimit("USER_PRESENT")
                 }
             }
         }
@@ -193,7 +203,10 @@ class VolumeLockService : Service() {
                 logServiceState("onStartCommand")
                 
                 // Do initial check
-                checkAndEnforceVolumeLimit()
+                checkAndEnforceVolumeLimit("onStartCommand")
+                
+                // Start heartbeat
+                heartbeatHandler.postDelayed(heartbeatRunnable, 1000)
                 
                 // Acquire WakeLock to prevent CPU sleeping during monitoring
                 acquireWakeLock()
@@ -219,6 +232,7 @@ class VolumeLockService : Service() {
                 unregisterVolumeObserver()
                 unregisterScreenReceiver()
                 sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
+                heartbeatHandler.removeCallbacks(heartbeatRunnable)
                 releaseWakeLock()
                 isMonitoring = false
             }
@@ -418,7 +432,7 @@ class VolumeLockService : Service() {
             .build()
     }
 
-    private fun checkAndEnforceVolumeLimit() {
+    private fun checkAndEnforceVolumeLimit(reason: String = "unknown") {
         // Debounce/Rate limit checks?
         val startTime = System.currentTimeMillis()
         
@@ -429,7 +443,7 @@ class VolumeLockService : Service() {
             val allowedLimitCapped = (maxVolumeLevel * (maxPercent / 100.0)).toInt()
             val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
             
-            // LogManager.info("🔍 Checking volume: current=$currentVolume, allowed=$allowedLimitCapped, max=$maxVolumeLevel, limit=$maxPercent%")
+            // LogManager.info("🔍 Checking volume (reason: $reason): current=$currentVolume, allowed=$allowedLimitCapped, max=$maxVolumeLevel, limit=$maxPercent%")
 
             if (currentVolume > allowedLimitCapped) {
                 val beforeCorrection = System.currentTimeMillis()
@@ -439,17 +453,13 @@ class VolumeLockService : Service() {
                 val totalTime = afterCorrection - startTime
                 
                 volumeCorrections++
-                val logMsg = "⚠️ Volume corrected #$volumeCorrections: $currentVolume -> $allowedLimitCapped (max:$maxVolumeLevel, limit:$maxPercent%) [correction took ${correctionTime}ms, total ${totalTime}ms]"
+                val logMsg = "⚠️ Volume corrected #$volumeCorrections (reason: $reason): $currentVolume -> $allowedLimitCapped (max:$maxVolumeLevel, limit:$maxPercent%) [correction took ${correctionTime}ms, total ${totalTime}ms]"
                 Log.d(TAG, logMsg)
                 LogManager.warning(logMsg)
-            } else {
-                // DON'T LOG ON SUCCESS TO AVOID SPAM
-                // val totalTime = System.currentTimeMillis() - startTime
-                // LogManager.info("✅ Volume OK: $currentVolume <= $allowedLimitCapped [check took ${totalTime}ms]")
             }
         } catch (e: Exception) {
             val totalTime = System.currentTimeMillis() - startTime
-            LogManager.error("❌ Error in checkAndEnforceVolumeLimit [took ${totalTime}ms]", e)
+            LogManager.error("❌ Error in checkAndEnforceVolumeLimit (reason: $reason) [took ${totalTime}ms]", e)
         }
     }
 }
