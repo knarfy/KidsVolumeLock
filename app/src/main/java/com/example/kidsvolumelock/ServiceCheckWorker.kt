@@ -22,7 +22,9 @@ class ServiceCheckWorker(context: Context, params: WorkerParameters) : Worker(co
             if (prefs.isServiceEnabled()) {
                 val serviceIntent = Intent(applicationContext, VolumeLockService::class.java)
                 
-                // Usamos un try-catch específico para Android 12+ (S)
+                // Comprobación adicional: ¿ya está corriendo?
+                // Nota: ActivityManager.getRunningServices está deprecated pero sigue siendo útil para servicios propios en este contexto simple
+                
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                          applicationContext.startForegroundService(serviceIntent)
@@ -32,14 +34,14 @@ class ServiceCheckWorker(context: Context, params: WorkerParameters) : Worker(co
                     LogManager.info("ServiceCheckWorker: ✅ Intento de inicio del servicio enviado")
                 } catch (e: Exception) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && e is ForegroundServiceStartNotAllowedException) {
-                        LogManager.warning("ServiceCheckWorker: ⚠️ No se pudo iniciar el servicio desde el worker (Restricción Android 12+)")
+                        LogManager.warning("ServiceCheckWorker: ⚠️ No se pudo iniciar el servicio (Restricción Android 12+). Se reintentará en la próxima ejecución.")
                     } else {
                         LogManager.error("ServiceCheckWorker: ❌ Error al iniciar el servicio", e)
-                        return Result.failure()
+                        return Result.retry() // Pedir a WorkManager que reintente más tarde
                     }
                 }
             } else {
-                LogManager.info("ServiceCheckWorker: ⏸️ Servicio deshabilitado en preferencias, no se requiere acción")
+                LogManager.info("ServiceCheckWorker: ⏸️ Servicio deshabilitado en preferencias")
             }
             
             return Result.success()

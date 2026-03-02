@@ -36,12 +36,13 @@ class VolumeLockService : Service() {
 
     private var lastVolumeChangeTimestamp = 0L
     private var cachedMaxVolumePercent = 50 // Default safe value
+    private var cachedMaxVolumeLevel = -1 // Global stream max volume
     private val heartbeatHandler = Handler(android.os.Looper.getMainLooper())
     private val heartbeatRunnable = object : Runnable {
         override fun run() {
-            LogManager.info("💓 HEARTBEAT - VolumeLockService is alive")
-            logServiceState("heartbeat")
-            heartbeatHandler.postDelayed(this, 5 * 60 * 1000) // Every 5 minutes
+            LogManager.info("💓 HEARTBEAT - VolumeLockService alive")
+            // Reduce heartbeat logging frequency
+            heartbeatHandler.postDelayed(this, 15 * 60 * 1000) // 15 minutes
         }
     }
 
@@ -433,18 +434,22 @@ class VolumeLockService : Service() {
     }
 
     private fun checkAndEnforceVolumeLimit(reason: String = "unknown") {
-        // Debounce/Rate limit checks?
         val startTime = System.currentTimeMillis()
         
         try {
             // Use cached value instead of reading from disk/IPC every time
             val maxPercent = cachedMaxVolumePercent
-            val maxVolumeLevel = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+            
+            // Optimization: Cache the stream max volume
+            if (cachedMaxVolumeLevel <= 0) {
+                cachedMaxVolumeLevel = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+                LogManager.info("📏 Max legal volume levels cached: $cachedMaxVolumeLevel")
+            }
+            
+            val maxVolumeLevel = cachedMaxVolumeLevel
             val allowedLimitCapped = (maxVolumeLevel * (maxPercent / 100.0)).toInt()
             val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
             
-            // LogManager.info("🔍 Checking volume (reason: $reason): current=$currentVolume, allowed=$allowedLimitCapped, max=$maxVolumeLevel, limit=$maxPercent%")
-
             if (currentVolume > allowedLimitCapped) {
                 val beforeCorrection = System.currentTimeMillis()
                 audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, allowedLimitCapped, 0)

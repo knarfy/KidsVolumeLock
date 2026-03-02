@@ -9,9 +9,10 @@ import android.widget.SeekBar
 import android.widget.Toast
 import android.provider.Settings
 import android.text.TextUtils
-import android.content.ComponentName
+import android.app.ActivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.Manifest
+import android.app.AlertDialog
 import android.content.pm.PackageManager
 import com.example.kidsvolumelock.databinding.ActivityMainBinding
 
@@ -126,9 +127,15 @@ class MainActivity : AppCompatActivity() {
         // Check for Overlay Permission (Android 6.0+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             LogManager.warning("Overlay permission missing. Requesting...")
-            Toast.makeText(this, "Por favor, otorga el permiso 'Mostrar sobre otras apps' para que el bloqueo funcione en segundo plano.", Toast.LENGTH_LONG).show()
-            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, android.net.Uri.parse("package:$packageName"))
-            startActivityForResult(intent, 201)
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Permiso Requerido")
+            builder.setMessage("Por favor, otorga el permiso 'Mostrar sobre otras apps' para que el bloqueo funcione correctamente en segundo plano.")
+            builder.setPositiveButton("Configurar") { _, _ ->
+                val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, android.net.Uri.parse("package:$packageName"))
+                startActivityForResult(intent, 201)
+            }
+            builder.setNegativeButton("Más tarde", null)
+            builder.show()
         }
     }
 
@@ -180,13 +187,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshServiceStatus() {
-        if (prefs.isServiceEnabled()) {
-            binding.tvServiceStatus.text = getString(R.string.status_running)
+        val isEnabled = prefs.isServiceEnabled()
+        val isRunning = isServiceRunning(VolumeLockService::class.java)
+        
+        if (isEnabled) {
+            binding.tvServiceStatus.text = if (isRunning) getString(R.string.status_running) else "Habilitado (esperando inicio...)"
             binding.btnToggleService.text = getString(R.string.btn_stop_service)
         } else {
             binding.tvServiceStatus.text = getString(R.string.status_stopped)
             binding.btnToggleService.text = getString(R.string.btn_start_service)
         }
+    }
+
+    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
     
     override fun onResume() {
